@@ -1,5 +1,6 @@
 package application;
 
+import application.algorithm.EdmondKarp;
 import application.graph.Graph;
 
 public class Main{
@@ -29,6 +30,14 @@ public class Main{
 			System.err.println(e.getMessage());
 		}
 		
-		System.out.println(g);
+		EdmondKarp ek = new EdmondKarp(g, 0, 5);
+		ek.start();
+		try {
+			ek.join();
+		}catch(InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println(ek.getMaxFlow());
 	}
 }
