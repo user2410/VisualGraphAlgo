@@ -1,35 +1,34 @@
 package application;
-	
-import javafx.application.Application;
-import javafx.stage.Stage;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-// import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
-// import javafx.fxml.FXMLLoader;
 
+import application.graph.Graph;
 
-public class Main extends Application {
-	@Override
-	public void start(Stage primaryStage) {
-		try {
-			primaryStage.setTitle("Visual Graph Algorithms");
-			
-			Button b = new Button();
-			b.setText("Click me");
-			
-			StackPane layout = new StackPane();
-			layout.getChildren().add(b);
-			
-			Scene scence = new Scene(layout, 300, 250);
-			primaryStage.setScene(scence);
-			primaryStage.show();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
+public class Main{
 	
 	public static void main(String[] args) {
-		launch(args);
+		Graph g = new Graph();
+		g.addNode(1, 1);
+		g.addNode(2, 2);
+		g.addNode(3, 2);
+		g.addNode(2, 0);
+		g.addNode(3, 1);
+		g.addNode(4, 1);
+		
+		try {
+			g.addEdge(0, 1, 5);
+			g.addEdge(0, 3, 15);
+			g.addEdge(1, 2, 10);
+			g.addEdge(1, 4, 5);
+			// g.addEdge(1, 8, 5);
+			g.addEdge(2, 3, 3);
+			g.addEdge(2, 5, 20);
+			g.addEdge(3, 1, 5);
+			g.addEdge(3, 4, 5);
+			g.addEdge(4, 2, 2);
+			g.addEdge(4, 5, 5);
+		}catch(Exception e) {
+			System.err.println(e.getMessage());
+		}
+		
+		System.out.println(g);
 	}
 }
