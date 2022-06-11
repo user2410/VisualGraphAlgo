@@ -18,7 +18,9 @@ public class Main{
 			g.addEdge(0, 3, 15);
 			g.addEdge(1, 2, 10);
 			g.addEdge(1, 4, 5);
-			// g.addEdge(1, 8, 5);
+			// g.addEdge(1, 8, 5); // Node out of range
+			// g.addEdge(1, 4, -5); // Invalid node edge
+			// g.addEdge(1, 4, 5); // Edge already existed
 			g.addEdge(2, 3, 3);
 			g.addEdge(2, 5, 20);
 			g.addEdge(3, 1, 5);
