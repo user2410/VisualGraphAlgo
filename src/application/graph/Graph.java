@@ -43,6 +43,10 @@ public class Graph {
 		adjList.get(from).add(to);
 	}
 	
+	public int getNodeCount() {
+		return nextNodeID;
+	}
+	
 	@Override
 	public String toString() {
 		return "Adjacent list: \n" + adjList + "\n Edges:\n" + edges;
