@@ -3,7 +3,6 @@ package application.algorithm;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
-import javafx.util.Pair;
 
 import application.graph.Edge;
 import application.graph.Graph;
@@ -15,12 +14,16 @@ public class EdmondKarp extends Algorithm{
 	
 	protected long [][] cGraph;
 	protected long [][] rGraph;
+	protected int[] parent;
+	protected boolean[] visited;
 	
 	public EdmondKarp(Graph graph, int s, int t) {
 		this.graph = graph;
 		this.s = s;
 		this.t = t;
-		
+
+		parent = new int[graph.getNodeCount()];
+		visited = new boolean[graph.getNodeCount()];
 		cGraph = new long[graph.getNodeCount()][graph.getNodeCount()];
 		
 		for (long[] row : cGraph) {
@@ -35,49 +38,47 @@ public class EdmondKarp extends Algorithm{
 		rGraph = cGraph.clone();
 	}
 	
-	private long bfs(int[] parent) {
-		Arrays.fill(parent, -1);
-		parent[s] = -2;
-		
-		Queue<Pair<Integer, Long>> q = new LinkedList<>();
-		q.add(new Pair<Integer, Long>(s, Long.MAX_VALUE));
+	private boolean bfs() {		
+		Queue<Integer> q = new LinkedList<>();
+		q.add(s);
 		
 		do {
-			Pair<Integer, Long> curNode = q.poll();
-			if(curNode==null) break;
-			int cur = curNode.getKey();
-			long flow = curNode.getValue();
+			Integer cur = q.poll();
+			if(cur==null) break;
 			
 			for(int next : graph.adjList.get(cur)) {
-				if(parent[next] == -1 && rGraph[cur][next] != 0) {
+				if(!visited[next] && rGraph[cur][next] > 0) {
+					q.add(next);
 					parent[next] = cur;
-					long newFlow = flow < rGraph[cur][next] ? flow : rGraph[cur][next];
-					if(next == t)
-						return newFlow;
-					q.add(new Pair<Integer, Long>(next, newFlow));
+					visited[next] = true;
 				}
 			}
 			
 		}while(true);
 		
-		return 0;
+		return visited[t];
 	}
 	
 	@Override
 	public void explore() {
 		long flow = 0;
-		int[] parent = new int[graph.getNodeCount()];
-		long newFlow;
 		
-		while((newFlow = bfs(parent))>0) {
-			flow += newFlow;
-			int cur = t;
-			while(cur != s) {
-				int prev = parent[cur];
-				rGraph[prev][cur] -= newFlow;
-				rGraph[cur][prev] += newFlow;
-				cur = prev;
+		while(bfs()) {
+			Arrays.fill(visited, false);
+			long pathFlow = Long.MAX_VALUE;
+
+			for(int v=t; v!=s; v=parent[v]) {
+				int u = parent[v];
+				pathFlow = pathFlow < rGraph[u][v] ? pathFlow : rGraph[u][v];
 			}
+			
+			for(int v=t; v!=s; v=parent[v]) {
+				int u = parent[v];
+				rGraph[u][v] -= pathFlow;
+				rGraph[v][u] += pathFlow;
+			}
+			
+			flow += pathFlow;
 		}
 		
 		maxFlow = flow;
