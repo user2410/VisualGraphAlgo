@@ -1,5 +1,6 @@
 package application;
 
+import application.algorithm.Dinic;
 import application.algorithm.EdmondKarp;
 import application.algorithm.FordFulkerson;
 import application.graph.Graph;
@@ -48,5 +49,14 @@ public class Main{
 			e.printStackTrace();
 		}
 		System.out.println(ek.getMaxFlow());
+
+		Dinic d = new Dinic(g, 0, 5);
+		d.start();
+		try {
+			d.join();
+		}catch(InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println(d.getMaxFlow());
 	}
 }
