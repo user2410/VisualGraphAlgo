@@ -3,6 +3,7 @@ package application;
 import application.algorithm.Dinic;
 import application.algorithm.EdmondKarp;
 import application.algorithm.FordFulkerson;
+import application.algorithm.MinCut;
 import application.graph.Graph;
 
 public class Main{
@@ -58,5 +59,15 @@ public class Main{
 			e.printStackTrace();
 		}
 		System.out.println(d.getMaxFlow());
+		
+		MinCut mc = new MinCut(g, 0, 5);
+		mc.start();
+		try {
+			mc.join();
+		}catch(InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println(mc.minCuts);
+		
 	}
 }

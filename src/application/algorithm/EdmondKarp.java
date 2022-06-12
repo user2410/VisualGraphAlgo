@@ -25,16 +25,22 @@ public class EdmondKarp extends Algorithm{
 		parent = new int[n];
 		visited = new boolean[n];
 		cGraph = new long[n][n];
+		rGraph = new long[n][n];
 		
 		for (long[] row : cGraph) {
 			Arrays.fill(row, 0);
 		}
+
+		for (long[] row : rGraph) {
+			Arrays.fill(row, 0);
+		}
 		
 		graph.edges.forEach((edge)->{
-			cGraph[edge.getFrom()][edge.getTo()] = edge.getCapacity();			
+			int from = edge.getFrom();
+			int to = edge.getTo();
+			rGraph[from][to] = cGraph[from][to] = edge.getCapacity();			
 		});
 		
-		rGraph = cGraph.clone();
 	}
 	
 	private boolean bfs() {		
