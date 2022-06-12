@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import application.graph.Edge;
 import application.graph.Graph;
 
 public class EdmondKarp extends Algorithm{
@@ -22,18 +21,18 @@ public class EdmondKarp extends Algorithm{
 		this.s = s;
 		this.t = t;
 
-		parent = new int[graph.getNodeCount()];
-		visited = new boolean[graph.getNodeCount()];
-		cGraph = new long[graph.getNodeCount()][graph.getNodeCount()];
+		int n = graph.getNodeCount();
+		parent = new int[n];
+		visited = new boolean[n];
+		cGraph = new long[n][n];
 		
 		for (long[] row : cGraph) {
 			Arrays.fill(row, 0);
 		}
 		
-		for(int i=0; i<graph.edges.size(); i++) {
-			Edge cur = graph.edges.get(i);
-			cGraph[cur.getFrom()][cur.getTo()] = cur.getCapacity();
-		}
+		graph.edges.forEach((edge)->{
+			cGraph[edge.getFrom()][edge.getTo()] = edge.getCapacity();			
+		});
 		
 		rGraph = cGraph.clone();
 	}
@@ -46,7 +45,7 @@ public class EdmondKarp extends Algorithm{
 			Integer cur = q.poll();
 			if(cur==null) break;
 			
-			for(int next : graph.adjList.get(cur)) {
+			for(int next = 0; next<graph.getNodeCount(); next++) {
 				if(!visited[next] && rGraph[cur][next] > 0) {
 					q.add(next);
 					parent[next] = cur;

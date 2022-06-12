@@ -1,6 +1,7 @@
 package application;
 
 import application.algorithm.EdmondKarp;
+import application.algorithm.FordFulkerson;
 import application.graph.Graph;
 
 public class Main{
@@ -30,6 +31,15 @@ public class Main{
 			System.err.println(e.getMessage());
 		}
 		
+		FordFulkerson ff = new FordFulkerson(g, 0, 5);
+		ff.start();
+		try {
+			ff.join();
+		}catch(InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println(ff.getMaxFlow());
+		
 		EdmondKarp ek = new EdmondKarp(g, 0, 5);
 		ek.start();
 		try {
@@ -37,7 +47,6 @@ public class Main{
 		}catch(InterruptedException e) {
 			e.printStackTrace();
 		}
-		
 		System.out.println(ek.getMaxFlow());
 	}
 }
