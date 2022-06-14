@@ -10,7 +10,6 @@ import application.graph.Graph;
 
 public class Dinic extends Algorithm{
 	private long maxFlow = 0;
-	private int s, t;
 	
 	private int[] level;
 	private ArrayList<ArrayList<Integer>> adj;
@@ -53,7 +52,7 @@ public class Dinic extends Algorithm{
 				
 				Edge edge = edges.get(next);
 				// insufficient capacity
-				if(edge.getCapacity()-edge.getFlow() < 1) continue;
+				if(edge.getCapacity()-edge.getFlow() <= 0) continue;
 				// already traversed node
                 if(level[edge.getTo()] != -1) continue;
                 
@@ -78,7 +77,7 @@ public class Dinic extends Algorithm{
 			
 			long remain = cap - flow;
 			
-			if( ((level[cur]+1) != level[to]) || (remain < 1)) {
+			if( ((level[cur]+1) != level[to]) || (remain <= 0)) {
 				continue;
 			}
 			
@@ -122,5 +121,18 @@ public class Dinic extends Algorithm{
 	
 	public long getMaxFlow() {
 		return maxFlow;
+	}
+
+	@Override
+	public long[][] getRGraph() {
+		int n = graph.getNodeCount();
+		long [][] RGraph = new long[n][n];
+		
+		for(int i=0; i<edges.size(); i++) {
+			Edge e = edges.get(i);
+			RGraph[e.getFrom()][e.getTo()] = e.getFlow();
+		}
+		
+		return RGraph;
 	}
 }
