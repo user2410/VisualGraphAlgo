@@ -49,7 +49,7 @@
     <bottom>
         <HBox id="footer-section">
             <children>
-                <Label text="Copyright 2017 CalliCoder"></Label>
+                <Label text="Demo Javafx fxml"></Label>
             </children>
         </HBox>
     </bottom>
