@@ -47,7 +47,6 @@ public class FordFulkerson extends EdmondKarp {
 		}
 
 		maxFlow = flow;
-		getMinCut(this.cGraph, this.rGraph);
 	}
 
 }
