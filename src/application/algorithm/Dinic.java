@@ -5,15 +5,17 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import application.context.state.factory.DinicStateMaker;
 import application.graph.Edge;
 import application.graph.Graph;
 
 public class Dinic extends Algorithm {
-	private long maxFlow = 0;
-
-	private int[] level;
+	
 	private ArrayList<ArrayList<Integer>> adj;
 	private ArrayList<Edge> edges;
+	private int[] level;
+	
+	private DinicStateMaker stMaker;
 
 	public Dinic(Graph graph, int s, int t) {
 		this.graph = graph;
@@ -49,6 +51,8 @@ public class Dinic extends Algorithm {
 			adj.get(to).add(nextID + 1);
 			nextID += 2;
 		}
+		
+		stMaker = new DinicStateMaker();
 	}
 
 	private boolean bfs() {
@@ -60,24 +64,27 @@ public class Dinic extends Algorithm {
 			if (cur == null)
 				break;
 			for (int next : adj.get(cur)) {
-
+				
 				Edge edge = edges.get(next);
+				int to = edge.getTo();
+				
 				// insufficient capacity
 				if (edge.getCapacity() - edge.getFlow() <= 0)
 					continue;
 				// already traversed node
-				if (level[edge.getTo()] != -1)
+				if (level[to] != -1)
 					continue;
-
-				level[edge.getTo()] = level[cur] + 1;
-				q.add(edge.getTo());
+				
+				level[to] = level[cur] + 1;
+				if(to == t) break;
+				q.add(to);
 			}
 		} while (true);
 
 		return level[t] != -1;
 	}
 
-	private long dfs(int cur, long pushed) {
+	private long dfs(int cur, long pushed, ArrayList<Edge> path) {
 		if (pushed == 0)
 			return 0;
 
@@ -96,11 +103,12 @@ public class Dinic extends Algorithm {
 				continue;
 			}
 
-			long tr = dfs(to, remain < pushed ? remain : pushed);
+			long tr = dfs(to, remain < pushed ? remain : pushed, path);
 			if (tr == 0)
 				continue;
 
 			edges.get(node).setFlow(flow + tr);
+			path.add(new Edge(cur, to, tr));
 			edges.get(node ^ 1).setFlow(edges.get(node ^ 1).getFlow() - tr);
 
 			return tr;
@@ -111,8 +119,15 @@ public class Dinic extends Algorithm {
 
 	@Override
 	public void explore() {
-		long flow = 0;
+		
+		addState(stMaker.makeState0(this));
+		
+		addState(stMaker.makeState1(this));
+		
+		maxFlow = 0;
 
+		ArrayList<Edge> path = new ArrayList<Edge>();
+		
 		while (true) {
 			Arrays.fill(level, -1);
 			level[s] = 0;
@@ -120,21 +135,29 @@ public class Dinic extends Algorithm {
 			// if t is unreachable, break the loop
 			if (!bfs())
 				break;
-
+			
+			addState(stMaker.makeState2(this, level));
+			
 			// find an abitrary blocking flow
 			long pushed;
-			while ((pushed = dfs(s, Long.MAX_VALUE)) > 0) {
-				flow += pushed;
+			path.clear();
+			while ((pushed = dfs(s, Long.MAX_VALUE, path)) > 0) {
+				
+				addState(stMaker.makeState3(this, pushed));
+				
+				for(Edge edge : path) {
+					addState(stMaker.makeState4(this, pushed, edge));
+				}
+				
+				maxFlow += pushed;
+				addState(stMaker.makeState5(this, pushed));
 			}
 		}
+		
+		addState(stMaker.makeState6(this));
 
-		maxFlow = flow;
 		getMinCut(cGraph, getRGraph());
-	}
-
-	@Override
-	public void run() {
-		explore();
+		addState(stMaker.makeStateFinal(this));
 	}
 
 	public long getMaxFlow() {
@@ -155,4 +178,5 @@ public class Dinic extends Algorithm {
 
 		return RGraph;
 	}
+	
 }

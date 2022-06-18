@@ -1,18 +1,22 @@
 package application.algorithm;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import application.context.state.factory.EKStateMaker;
+import application.context.state.factory.FFStateMaker;
+import application.graph.Edge;
 import application.graph.Graph;
 
 public class EdmondKarp extends Algorithm {
 
-	protected long maxFlow = 0;
-
 	protected long[][] rGraph;
 	protected int[] parent;
 	protected boolean[] visited;
+	
+	private EKStateMaker stMaker;
 
 	public EdmondKarp(Graph graph, int s, int t) {
 		this.graph = graph;
@@ -25,7 +29,6 @@ public class EdmondKarp extends Algorithm {
 		cGraph = new long[n][n];
 		rGraph = new long[n][n];
 		
-		/* Phase 0 */
 		for (long[] row : cGraph) {
 			Arrays.fill(row, 0);
 		}
@@ -40,7 +43,7 @@ public class EdmondKarp extends Algorithm {
 			cGraph[from][to] = rGraph[from][to] = edge.getCapacity();
 		});
 		
-		/* Phase 1 - initMaxFlow */
+		stMaker = new FFStateMaker();
 	}
 
 	private boolean bfs() {
@@ -67,54 +70,58 @@ public class EdmondKarp extends Algorithm {
 
 	@Override
 	public void explore() {
-		long flow = 0;
 
-		while (bfs()) {/* Phase 2 - while there is an augmenting path */
+		addState(stMaker.makeState0(this));
+		
+		addState(stMaker.makeState1(this));
+		
+		maxFlow = 0;
+
+		ArrayList<Edge> path = new ArrayList<Edge>();
+		
+		while (bfs()) {
 			Arrays.fill(visited, false);
 			long pathFlow = Long.MAX_VALUE;
 
+			path.clear();
 			for (int v = t; v != s; v = parent[v]) {
 				int u = parent[v];
+				path.add(new Edge(u,v));
 				pathFlow = pathFlow < rGraph[u][v] ? pathFlow : rGraph[u][v];
 			}
-			/* Phase 3 - construct path and find bottleneck */
+			
+			addState(stMaker.makeState2(this, pathFlow, path));
+			
 			for (int v = t; v != s; v = parent[v]) {
 				int u = parent[v];
 				rGraph[u][v] -= pathFlow;
+				addState(stMaker.makeState3(this, pathFlow, u, v, false));
 				rGraph[v][u] += pathFlow;
+				addState(stMaker.makeState3(this, pathFlow, v, u, true));
 			}
-			/*
-			 * Phase 4 for each edge u->v in the path decrease rGraph[u][v] by bottleneck
-			 * increase rGraph[v][u] by bottleneck
-			 */
-			flow += pathFlow;
+			
+			maxFlow += pathFlow;
+			addState(stMaker.makeState4(this, pathFlow));
 		}
 
-		maxFlow = flow;
+		addState(stMaker.makeState5(this));
+		
 		getMinCut(this.cGraph, this.rGraph);
+		addState(stMaker.makeStateFinal(this));
 	}
 
-	@Override
-	public void run() {
-		explore();
-	}
-
-	public long getMaxFlow() {
-		return maxFlow;
-	}
 
 	@Override
 	public long[][] getRGraph() {
 		int n = graph.getNodeCount();
 		long[][] RGraph = new long[n][n];
-
+		
 		for(int i=0; i<n; i++) {
-			for(int j=0; j<n; j++) {
-				RGraph[i][j] = rGraph[i][j];
-			}
+			long[] row = rGraph[i];
+			System.arraycopy(row, 0, RGraph[i], 0, n);
 		}
-
-		return RGraph;
+		
+		return rGraph;
 	}
 
 }

@@ -6,6 +6,11 @@ public class Edge {
 	private long capacity;
 	private long flow;
 	
+	public Edge(int from, int to) {		
+		this.from = from;
+		this.to = to;
+	}
+	
 	public Edge(int from, int to, long capacity) {
 		super();
 		this.from = from;

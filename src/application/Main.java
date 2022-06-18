@@ -1,8 +1,7 @@
 package application;
 
-import application.algorithm.Dinic;
-import application.algorithm.EdmondKarp;
-import application.algorithm.FordFulkerson;
+import application.algorithm.*;
+import application.context.Context;
 import application.graph.Graph;
 
 public class Main{
@@ -41,35 +40,14 @@ public class Main{
 			System.err.println(e.getMessage());
 		}
 		
-		FordFulkerson ff = new FordFulkerson(g, 0, 9);
-		ff.start();
-		try {
-			ff.join();
-		}catch(InterruptedException e) {
-			e.printStackTrace();
-		}
-		System.out.println(ff.getMaxFlow());
-		System.out.println(ff.minCuts);
+		Context c = new Context();
+		Algorithm a = Algorithm.makeAlgo(c, g, 0, 9, Algorithm.Type.FF);
+//		Algorithm a = Algorithm.makeAlgo(c, g, 0, 9, Algorithm.Type.EK);
+//		Algorithm a = Algorithm.makeAlgo(c, g, 0, 9, Algorithm.Type.DINIC);
+		c.setAlgo(a);
+		c.exploreAlgo();
 		
-		EdmondKarp ek = new EdmondKarp(g, 0, 9);
-		ek.start();
-		try {
-			ek.join();
-		}catch(InterruptedException e) {
-			e.printStackTrace();
-		}
-		System.out.println(ek.getMaxFlow());
-		System.out.println(ek.minCuts);
-		
-		Dinic d = new Dinic(g, 0, 9);
-		d.start();
-		try {
-			d.join();
-		}catch(InterruptedException e) {
-			e.printStackTrace();
-		}
-		System.out.println(d.getMaxFlow());
-		System.out.println(d.minCuts);
-		
+		System.out.println(a.getMaxFlow());
+		System.out.println(a.minCuts);
 	}
 }
