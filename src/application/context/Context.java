@@ -13,8 +13,18 @@ public class Context{
 	private ArrayList<AlgoState> states = new ArrayList<AlgoState>();
 	private int currentState = 0;
 	
-	public Context() {}
+	private long delay = 1000;
+	
+	private boolean isAlive;
+	private boolean isPlaying;
+	
+	public Context() {
+		isAlive = true;
+		isPlaying = true;
+	}
+	
 	public Context(Algorithm algo) {
+		this();
 		setAlgo(algo);
 	}
 	
@@ -25,7 +35,6 @@ public class Context{
 	}
 	
 	public synchronized void exploreAlgo() {
-		states.clear();
 		algo.explore();
 		currentState = 0;
 	}
@@ -38,13 +47,52 @@ public class Context{
 		return states.get(currentState);
 	}
 	
-	public synchronized void next() {
+	public synchronized AlgoState next() {
+		AlgoState st = null;
 		if(currentState + 1 < states.size())
-			currentState++;
+			st = states.get(++currentState);
+		
+		return st;
 	}
 	
-	public synchronized void prev() {
+	public AlgoState prev() {
+		AlgoState st = null;
 		if(currentState > 0)
-			currentState--;
+			st = states.get(--currentState);
+		
+		return st;
+	}
+	
+	public void setDelay(long delay) {
+		this.delay = delay;
+	}
+	
+	public void terminate() {
+		this.isAlive = false;
+	}
+	
+	public synchronized void togglePlaying() {
+		isPlaying = !isPlaying;
+		if(isPlaying)
+			notify();
+	}
+	
+	public synchronized void play() {
+		while(true) {
+			if(!isAlive) break;
+			AlgoState st = next();
+			System.out.println(st);
+			if(st==null) {
+				isPlaying = false;
+			}
+			try {
+				if(isPlaying)
+					wait(delay);
+				else 
+					wait();
+			} catch (InterruptedException e) {
+				
+			}
+		}
 	}
 }

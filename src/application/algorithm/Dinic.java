@@ -151,6 +151,7 @@ public class Dinic extends Algorithm {
 				
 				maxFlow += pushed;
 				addState(stMaker.makeState5(this, pushed));
+				path.clear();
 			}
 		}
 		

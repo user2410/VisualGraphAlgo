@@ -41,7 +41,7 @@ public class AlgoState {
 	}
 
 	public void setPath(ArrayList<Edge> path) {
-		this.path = path;
+		this.path = new ArrayList<Edge>(path);
 	}
 	
 	@Override

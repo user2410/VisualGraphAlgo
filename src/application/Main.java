@@ -2,6 +2,7 @@ package application;
 
 import application.algorithm.*;
 import application.context.Context;
+import application.context.ContextController;
 import application.graph.Graph;
 
 public class Main{
@@ -41,13 +42,42 @@ public class Main{
 		}
 		
 		Context c = new Context();
-		Algorithm a = Algorithm.makeAlgo(c, g, 0, 9, Algorithm.Type.FF);
+//		Algorithm a = Algorithm.makeAlgo(c, g, 0, 9, Algorithm.Type.FF);
 //		Algorithm a = Algorithm.makeAlgo(c, g, 0, 9, Algorithm.Type.EK);
-//		Algorithm a = Algorithm.makeAlgo(c, g, 0, 9, Algorithm.Type.DINIC);
+		Algorithm a = Algorithm.makeAlgo(c, g, 0, 9, Algorithm.Type.DINIC);
 		c.setAlgo(a);
 		c.exploreAlgo();
 		
-		System.out.println(a.getMaxFlow());
-		System.out.println(a.minCuts);
+		ContextController cc = new ContextController(c);
+		cc.start();
+		
+//		c.togglePlaying();
+//		try {
+//			Thread.sleep(5000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		c.togglePlaying();
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println("\nPAUSE\n");
+		c.togglePlaying();
+		
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println("\nRESUME\n");
+		c.togglePlaying();
+		
+		while(cc.isAlive());
+		c.terminate();
+//		System.out.println(a.getMaxFlow());
+//		System.out.println(a.minCuts);
 	}
 }
