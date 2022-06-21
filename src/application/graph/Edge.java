@@ -1,7 +1,14 @@
 package application.graph;
 
-public class Edge {
+import java.io.Serializable;
 
+public class Edge implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 592333285344128711L;
+	
 	private int from, to;
 	private long capacity;
 	private long flow;

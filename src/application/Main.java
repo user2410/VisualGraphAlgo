@@ -1,5 +1,8 @@
 package application;
 
+import java.io.File;
+import java.io.IOException;
+
 import application.algorithm.*;
 import application.context.Context;
 import application.context.ContextController;
@@ -41,6 +44,12 @@ public class Main{
 			System.err.println(e.getMessage());
 		}
 		
+		try {
+			g.serialize("dinicShowcase.graph");
+		}catch (IOException e) {
+			e.printStackTrace();
+		}
+		/*
 		Context c = new Context();
 //		Algorithm a = Algorithm.makeAlgo(c, g, 0, 9, Algorithm.Type.FF);
 //		Algorithm a = Algorithm.makeAlgo(c, g, 0, 9, Algorithm.Type.EK);
@@ -79,5 +88,6 @@ public class Main{
 		c.terminate();
 //		System.out.println(a.getMaxFlow());
 //		System.out.println(a.minCuts);
+		 */ 
 	}
 }
