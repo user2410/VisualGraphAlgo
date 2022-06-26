@@ -1,6 +1,7 @@
 package application.context;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import application.algorithm.Algorithm;
 import application.context.state.AlgoState;
@@ -15,12 +16,11 @@ public class Context{
 	
 	private long delay = 1000;
 	
-	private boolean isAlive;
-	private boolean isPlaying;
+	private final AtomicBoolean isAlive = new AtomicBoolean();
+	private final AtomicBoolean isPlaying = new AtomicBoolean();
 	
 	public Context() {
-		isAlive = true;
-		isPlaying = true;
+		isAlive.set(true);
 	}
 	
 	public Context(Algorithm algo) {
@@ -63,33 +63,43 @@ public class Context{
 		return st;
 	}
 	
+	public boolean isPlaying() {
+		return isPlaying.get();
+	}
+	
 	public void setDelay(long delay) {
 		this.delay = delay;
 	}
 	
-	public void terminate() {
-		this.isAlive = false;
+	public synchronized void terminate() {
+		isAlive.set(false);
+		notify();
 	}
 	
 	public synchronized void togglePlaying() {
-		isPlaying = !isPlaying;
-		if(isPlaying)
+		boolean _isPlaying = isPlaying.get();
+		isPlaying.set(!_isPlaying);
+		if(!_isPlaying)
 			notify();
 	}
 	
 	public synchronized void play() {
-		while(true) {
-			if(!isAlive) break;
+		isPlaying.set(true);
+		while(isAlive.get()) {
 			AlgoState st = next();
 			System.out.println(st);
 			if(st==null) {
-				isPlaying = false;
+				// System.out.println("the end!");
+				isPlaying.set(false);
 			}
 			try {
-				if(isPlaying)
+				if(isPlaying.get()) {					
 					wait(delay);
-				else 
+				}
+				else {
+					// System.out.println("PAUSE");
 					wait();
+				}
 			} catch (InterruptedException e) {
 				
 			}
