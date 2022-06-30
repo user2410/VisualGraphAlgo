@@ -7,7 +7,7 @@ import application.context.state.Step;
 
 public class FFStateMaker extends EKStateMaker {
 
-	public static final ArrayList<Step> steps = new ArrayList<Step>(Arrays.asList(
+	private static final ArrayList<Step> steps = new ArrayList<Step>(Arrays.asList(
 			new Step("initMaxFlow", 0),
 			new Step("while there is an augmenting path", 0),
 			new Step("find an augmenting path using DFS", 1),

@@ -53,14 +53,14 @@ public class Main{
 		
 		Context c = new Context();
 //		Algorithm a = Algorithm.makeAlgo(c, g, 0, 9, Algorithm.Type.FF);
-//		Algorithm a = Algorithm.makeAlgo(c, g, 0, 9, Algorithm.Type.EK);
-		Algorithm a = Algorithm.makeAlgo(c, g, 0, 9, Algorithm.Type.DINIC);
+		Algorithm a = Algorithm.makeAlgo(c, g, 0, 9, Algorithm.Type.EK);
+//		Algorithm a = Algorithm.makeAlgo(c, g, 0, 9, Algorithm.Type.DINIC);
 		c.setAlgo(a);
 		c.exploreAlgo();
 		
 		ContextController cc = new ContextController(c);
-		cc.start();
 		c.setDelay(500);
+		cc.start();
 		
 		try {
 			Thread.sleep(5000);
@@ -71,7 +71,7 @@ public class Main{
 		c.togglePlaying();
 		
 		try {
-			Thread.sleep(5000);
+			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

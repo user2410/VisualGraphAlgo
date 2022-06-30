@@ -13,7 +13,7 @@ public class FordFulkerson extends EdmondKarp {
 	
 	public FordFulkerson(Graph graph, int s, int t) {
 		super(graph, s, t);
-		stMaker = new FFStateMaker();
+		_stMaker = stMaker = new FFStateMaker();
 	}
 
 	private boolean dfs(int node) {
