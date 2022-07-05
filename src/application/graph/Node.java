@@ -1,7 +1,14 @@
 package application.graph;
 
-public class Node {
+import java.io.Serializable;
 
+public class Node implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6373045310265172839L;
+	
 	int id;
 	int x, y;
 
