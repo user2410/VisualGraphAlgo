@@ -15,13 +15,13 @@ public class Graph implements Serializable{
 	 */
 	private static final long serialVersionUID = 2189050753577717068L;
 	
-	private int nextNodeID = 0;
+	protected int nextNodeID = 0;
 	public ArrayList<Node> nodes = new ArrayList<Node>();
 	public ArrayList<ArrayList<Integer>> adjList = new ArrayList<ArrayList<Integer>>();
 	public ArrayList<Edge> edges = new ArrayList<Edge>();
 
-	public synchronized void addNode(int x, int y) {
-		nodes.add(new Node(x, y, nextNodeID++));
+	public void addNode(int x, int y) {
+		nodes.add(new Node(nextNodeID++, x, y));
 		adjList.add(new ArrayList<Integer>());
 	}
 	
@@ -34,7 +34,7 @@ public class Graph implements Serializable{
 		}
 	}
 	
-	public synchronized void addEdge(int from, int to, long cap) throws Exception {
+	public void addEdge(int from, int to, long cap) throws Exception {
 		
 		if(from < 0 || from >= nextNodeID) {				
 			throw new Exception("Node " + from + " out of range [0~" + (nextNodeID>0?nextNodeID-1:0) +"]");
@@ -93,4 +93,6 @@ public class Graph implements Serializable{
 		
 		return g;
 	}
+	
+	
 }
