@@ -52,7 +52,7 @@ public class Dinic extends Algorithm {
 			nextID += 2;
 		}
 		
-		stMaker = new DinicStateMaker();
+		_stMaker = stMaker = new DinicStateMaker();
 	}
 
 	private boolean bfs() {

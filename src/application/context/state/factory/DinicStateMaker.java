@@ -10,7 +10,7 @@ import application.graph.Edge;
 
 public class DinicStateMaker extends StateMaker {
 
-	public static final ArrayList<Step> steps = new ArrayList<Step>(Arrays.asList(
+	private static final ArrayList<Step> steps = new ArrayList<Step>(Arrays.asList(
 			new Step("initMaxFlow", 0),
 			new Step("while t is reachable from s in the residual graph", 0),
 			new Step("find the level graph (BFS)", 1),

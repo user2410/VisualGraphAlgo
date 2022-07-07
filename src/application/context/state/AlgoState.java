@@ -9,7 +9,8 @@ public class AlgoState {
 	private long[][] rGraph;
 	private String stateText1;
 	private String stateText2;
-	private Step step;
+	private Step step;			// for debugging purpose only
+	private int stepNumber;
 	private ArrayList<Edge> path = null;
 	
 	public AlgoState(long[][] rGraph, String stateText1, String stateText2, Step step) {
@@ -42,6 +43,10 @@ public class AlgoState {
 
 	public void setPath(ArrayList<Edge> path) {
 		this.path = new ArrayList<Edge>(path);
+	}
+	
+	public int getStepNumber() {
+		return stepNumber;
 	}
 	
 	@Override

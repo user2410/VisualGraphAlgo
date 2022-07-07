@@ -43,7 +43,7 @@ public class EdmondKarp extends Algorithm {
 			cGraph[from][to] = rGraph[from][to] = edge.getCapacity();
 		});
 		
-		stMaker = new FFStateMaker();
+		_stMaker = stMaker = new FFStateMaker();
 	}
 
 	private boolean bfs() {

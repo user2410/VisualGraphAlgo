@@ -7,6 +7,8 @@ import java.util.Stack;
 import application.graph.Graph;
 import application.context.Context;
 import application.context.state.AlgoState;
+import application.context.state.Step;
+import application.context.state.factory.StateMaker;
 import javafx.util.Pair;
 
 public abstract class Algorithm {
@@ -22,6 +24,7 @@ public abstract class Algorithm {
 	public ArrayList<Pair<Integer, Integer>> minCuts = new ArrayList<Pair<Integer, Integer>>();
 	
 	// State properties
+	protected StateMaker _stMaker;
 	protected AlgoState currentState;
 	protected Context context;
 	
@@ -91,6 +94,10 @@ public abstract class Algorithm {
 		}
 	}
 	
+	public Graph getGraph() {
+		return graph;
+	}
+	
 	public int getS() {
 		return s;
 	}
@@ -109,5 +116,9 @@ public abstract class Algorithm {
 	
 	protected void addState(AlgoState st) {
 		context.addState(st);
+	}
+	
+	public ArrayList<Step> getBaseSteps() {
+		return _stMaker.getSteps();
 	}
 }
