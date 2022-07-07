@@ -1,16 +1,27 @@
 package application.graph;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Graph {
+public class Graph implements Serializable{
 
-	private int nextNodeID = 0;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2189050753577717068L;
+	
+	protected int nextNodeID = 0;
 	public ArrayList<Node> nodes = new ArrayList<Node>();
 	public ArrayList<ArrayList<Integer>> adjList = new ArrayList<ArrayList<Integer>>();
 	public ArrayList<Edge> edges = new ArrayList<Edge>();
 
-	public synchronized void addNode(int x, int y) {
-		nodes.add(new Node(x, y, nextNodeID++));
+	public void addNode(int x, int y) {
+		nodes.add(new Node(nextNodeID++, x, y));
 		adjList.add(new ArrayList<Integer>());
 	}
 	
@@ -23,7 +34,7 @@ public class Graph {
 		}
 	}
 	
-	public synchronized void addEdge(int from, int to, long cap) throws Exception {
+	public void addEdge(int from, int to, long cap) throws Exception {
 		
 		if(from < 0 || from >= nextNodeID) {				
 			throw new Exception("Node " + from + " out of range [0~" + (nextNodeID>0?nextNodeID-1:0) +"]");
@@ -43,8 +54,45 @@ public class Graph {
 		adjList.get(from).add(to);
 	}
 	
+	public int getNodeCount() {
+		return nextNodeID;
+	}
+	
 	@Override
 	public String toString() {
 		return "Adjacent list: \n" + adjList + "\n Edges:\n" + edges;
 	}
+	
+	public void serialize(String filename) throws IOException {
+        
+		//Saving of object in a file
+		FileOutputStream file = new FileOutputStream("data/graphs/"+filename);
+		ObjectOutputStream out = new ObjectOutputStream(file);
+		
+		// Method for serialization of object
+		out.writeObject(this);
+		
+		out.close();
+		file.close();
+		
+		System.out.println("Object has been serialized");
+	}
+	
+	public static Graph deserialize(String filename) throws IOException, ClassNotFoundException {
+		Graph g = null;
+		
+		// Reading the object from a file
+		FileInputStream file = new FileInputStream("data/graphs/"+filename);
+		ObjectInputStream in = new ObjectInputStream(file);
+		
+		// Method for deserialization of object
+		g = (Graph)in.readObject();
+		
+		in.close();
+		file.close();
+		
+		return g;
+	}
+	
+	
 }
