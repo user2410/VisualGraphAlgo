@@ -13,17 +13,16 @@ public class Main extends Application{
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			mainWindow = primaryStage;
+//			mainWindow = primaryStage;
 			
 			Parent root = FXMLLoader.load(getClass().getResource("application.fxml"));
-			
 			Scene scene = new Scene(root, 1000, 600);
 			
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			
-			mainWindow.setScene(scene);
-			mainWindow.setTitle("JavaFx demo");
-			mainWindow.show();
+			primaryStage.setScene(scene);
+			primaryStage.setTitle("JavaFx demo");
+			primaryStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
