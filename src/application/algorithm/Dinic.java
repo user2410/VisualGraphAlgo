@@ -158,7 +158,7 @@ public class Dinic extends Algorithm {
 		addState(stMaker.makeState6(this));
 
 		getMinCut(cGraph, getRGraph());
-		addState(stMaker.makeStateFinal(this));
+		addState(stMaker.makeStateFinal(this, minCuts));
 	}
 
 	public long getMaxFlow() {

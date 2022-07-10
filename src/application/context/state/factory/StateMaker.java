@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import application.algorithm.Algorithm;
 import application.context.state.AlgoState;
 import application.context.state.Step;
+import application.graph.Edge;
 
 public abstract class StateMaker {
 
@@ -22,10 +23,12 @@ public abstract class StateMaker {
 		return new AlgoState(algo.getRGraph(), currentFlowText(algo), "Preparing residual graph.", getSteps().get(0));
 	}
 	
-	public AlgoState makeStateFinal(Algorithm algo) {
+	public AlgoState makeStateFinal(Algorithm algo, ArrayList<Edge> path) {
 		String stateText1 = "Maximum flow = Minimum Cut from " + algo.getS() + " to " + algo.getT() + " is " + algo.getMaxFlow();
 		String stateText2 = "Edge(s) that cross(es) the ST-cut is/are highlighted.";
-		return new AlgoState(algo.getRGraph(), stateText1, stateText2, new Step("", -1, -1));
+		AlgoState newState = new AlgoState(algo.getRGraph(), stateText1, stateText2, new Step("", -1, -1));
+		newState.setPath(path);
+		return newState;
 	}
 
 }

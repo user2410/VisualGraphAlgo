@@ -14,6 +14,7 @@ import application.context.state.factory.FFStateMaker;
 import application.graph.Edge;
 import application.ui.GEdge;
 import application.ui.GGraph;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -310,6 +311,7 @@ public class MainController implements Initializable {
 				algoSelector.setDisable(true);
 				srcNodeInput.setDisable(true);
 				sinkNodeInput.setDisable(true);
+				playpauseBtn.setText("||");
 				
 				Algorithm algo = Algorithm.makeAlgo(context, tGraph, srcNode, sinkNode, algoType);
 				context.setAlgo(algo);
@@ -337,6 +339,7 @@ public class MainController implements Initializable {
 				context.pause();
 				playpauseBtn.setText("|>");
 			}else {
+				if(context.getCurrentStateNum()+1 == context.getStateCount()) context.setCurrentState(0);
 				context.resume();
 				playpauseBtn.setText("||");				
 			}
@@ -364,8 +367,12 @@ public class MainController implements Initializable {
 	
 	public void reactToContext(AlgoState as) {
 		if(as==null) {
-			as = context.getStateAt(0);
-			playpauseBtn.fire();
+			context.pause();
+			Platform.runLater(new Runnable() {
+			    @Override
+			    public void run() {playpauseBtn.setText("|>");}
+			});
+			return;
 		}
 		
 		// update draw pane

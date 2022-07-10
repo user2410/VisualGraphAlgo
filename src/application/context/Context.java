@@ -80,30 +80,26 @@ public class Context{
 		return states.get(currentState.get());
 	}
 	
-	public synchronized void setCurrentState(int step) {
-		currentState.set(step);
+	public void setCurrentState(int st) {
+		currentState.set(st);
 	}
 	
 	public int getStateCount() {
 		return states.size();
 	}
 	
-	public synchronized AlgoState next() {
-		AlgoState st = null;
+	public synchronized void next() {
 		if(currentState.get() + 1 < states.size()) {
-			int cur = currentState.get();
-			st = states.get(cur);
-			currentState.set(cur+1);
+			currentState.set(currentState.get()+1);
 		}
-		notifyController();
-		return st;
+		controller.reactToContext(getCurrentState());
 	}
 	
 	public synchronized void prev() {
 		if(currentState.get() > 0) {
 			currentState.set(currentState.get()-1);
 		}
-		notifyController();
+		controller.reactToContext(getCurrentState());
 	}
 	
 	public boolean isPlaying() {
@@ -132,12 +128,17 @@ public class Context{
 	public synchronized void play() {
 		isAlive.set(true);
 		isPlaying.set(true);
-		
+		AlgoState oldSt = null, st;
 		while(isAlive.get()) {
-			AlgoState st = next();
+			st = getCurrentState();
 			System.out.println(st);
-			if(st==null) isPlaying.set(false);
-			notifyController();
+			if(oldSt == st) {
+				isPlaying.set(false);
+				controller.reactToContext(null);
+			}else {
+				controller.reactToContext(st);
+			}
+			oldSt = st;
 			try {
 				if(isPlaying.get()) {
 					isPlaying.set(false);
@@ -150,11 +151,8 @@ public class Context{
 					isPlaying.set(true);
 				}
 			} catch (InterruptedException e) {}
+			next();
 		}
-	}
-	
-	private synchronized void notifyController() {
-		controller.reactToContext(getCurrentState());
 	}
 	
 }

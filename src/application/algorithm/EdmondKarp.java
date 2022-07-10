@@ -107,7 +107,7 @@ public class EdmondKarp extends Algorithm {
 		addState(stMaker.makeState5(this));
 		
 		getMinCut(this.cGraph, this.rGraph);
-		addState(stMaker.makeStateFinal(this));
+		addState(stMaker.makeStateFinal(this, minCuts));
 	}
 
 
