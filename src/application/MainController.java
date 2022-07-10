@@ -26,6 +26,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
@@ -82,6 +83,10 @@ public class MainController implements Initializable {
 	@FXML
 	Button goBtn;
 	
+	@FXML
+	Label leftStatusLine;
+	@FXML
+	Label rightStatusLine;
 	
 	
 	/*
@@ -121,7 +126,9 @@ public class MainController implements Initializable {
 		speedSlider.valueChangingProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
-				context.setSpeed(speedSlider.getValue());
+				double value = speedSlider.getValue();
+				context.setSpeed(value);
+				rightStatusLine.setText("Speed: " + String.format("%.2f", value) + 'x');
 			}
 		});
 		
@@ -131,7 +138,7 @@ public class MainController implements Initializable {
 		progressSlider.valueChangingProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
-				context.setCurrentState((int)speedSlider.getValue());
+				context.setCurrentState((int)progressSlider.getValue());
 			}
 		});
 		
@@ -293,6 +300,8 @@ public class MainController implements Initializable {
 			srcNodeInput.setDisable(false);
 			sinkNodeInput.setDisable(false);
 			
+			leftStatusLine.setText("Edit mode");
+			
 			context.terminate();
 			
 			for(Edge e : tGraph.edges) {
@@ -312,10 +321,22 @@ public class MainController implements Initializable {
 				srcNodeInput.setDisable(true);
 				sinkNodeInput.setDisable(true);
 				playpauseBtn.setText("||");
+				speedSlider.setValue(1.0);
 				
 				Algorithm algo = Algorithm.makeAlgo(context, tGraph, srcNode, sinkNode, algoType);
 				context.setAlgo(algo);
-				context.exploreAlgo();
+				Thread t = new Thread() {
+					@Override
+					public void run() {
+						context.exploreAlgo();						
+					}
+				};
+				t.start();
+				leftStatusLine.setText("Solving the graph");
+				while(t.getState() != Thread.State.TERMINATED);
+				leftStatusLine.setText("Play mode");
+				
+				rightStatusLine.setText("Speed: 1.0x");
 				
 				progressSlider.setMax(context.getStateCount()-1);
 				progressSlider.setShowTickMarks(true);

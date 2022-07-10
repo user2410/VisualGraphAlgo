@@ -81,7 +81,10 @@ public class Context{
 	}
 	
 	public void setCurrentState(int st) {
-		currentState.set(st);
+		if(st>=0 && st<states.size()) {
+			currentState.set(st);
+			controller.reactToContext(getCurrentState());
+		}
 	}
 	
 	public int getStateCount() {
@@ -108,7 +111,7 @@ public class Context{
 	
 	public void setSpeed(double speed) {
 		speed = 1.0/speed;
-		delay.set((long)(speed*delay.get()));
+		delay.set((long)(speed*DEFAULT_DELAY));
 	}
 	
 	public synchronized void terminate() {

@@ -158,14 +158,14 @@
                         <Separator layoutX="10.0" layoutY="46.0" prefWidth="200.0" />
                         <VBox fx:id="algoStateArea" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
                            <children>
-                              <Text fx:id="algoStateLine1" strokeType="OUTSIDE" strokeWidth="0.0" text="State line 1">
+                              <Text fx:id="algoStateLine1" strokeType="OUTSIDE" strokeWidth="0.0">
                                  <VBox.margin>
                                     <Insets left="5.0" />
                                  </VBox.margin>
                                  <font>
                                     <Font size="10.0" />
                                  </font></Text>
-                              <Text fx:id="algoStateLine2" strokeType="OUTSIDE" strokeWidth="0.0" text="State line 2">
+                              <Text fx:id="algoStateLine2" strokeType="OUTSIDE" strokeWidth="0.0">
                                  <VBox.margin>
                                     <Insets left="5.0" />
                                  </VBox.margin>
@@ -235,7 +235,7 @@
     </SplitPane>
     <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
       <children>
-        <Label maxHeight="1.7976931348623157E308" maxWidth="-1.0" text="Left status" HBox.hgrow="ALWAYS">
+        <Label fx:id="leftStatusLine" maxHeight="1.7976931348623157E308" maxWidth="-1.0" text="Edit mode" HBox.hgrow="ALWAYS">
           <font>
             <Font size="11.0" fx:id="x3" />
           </font>
@@ -244,7 +244,7 @@
           </textFill>
         </Label>
         <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
-        <Label font="$x3" maxWidth="-1.0" text="Speed" textFill="$x4" HBox.hgrow="NEVER" />
+        <Label fx:id="rightStatusLine" font="$x3" maxWidth="-1.0" textFill="$x4" HBox.hgrow="NEVER" />
       </children>
       <padding>
         <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
