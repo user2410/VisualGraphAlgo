@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import application.graph.Graph;
 import application.graph.Node;
+import application.ui.math.Vector2;
+import javafx.scene.layout.Pane;
 
 public class GGraph extends Graph{
 
@@ -11,25 +13,24 @@ public class GGraph extends Graph{
 	 * 
 	 */
 	private static final long serialVersionUID = 4967818067696204778L;
-	Session s;
+	Pane drawPane;
 	private GNode selectedNode;
+	private GEdge selectedEdge;
 	
-	public GGraph(Session s) {
+	public GGraph(Pane drawPane) {
 		super();
-		this.s = s;
+		this.drawPane = drawPane;
 		selectedNode = null;
-	}
-	
-	public static double distance(int x1, int y1, int x2, int y2) {
-		int absX = x1>x2 ? x1-x2 : x2-x1;
-		int absY = y1>y2 ? y1-y2 : y2-y1;
-		return Math.sqrt(absX*absX + absY*absY); 
+		selectedEdge = null;
 	}
 	
 	private GNode getNodeAt(int x, int y) {
 		GNode n = null;
+		Vector2 dis = Vector2.Zero();
 		for(Node node : nodes) {
-			if(distance(node.getX(), node.getY(), x, y) < GNode.R){
+			dis.x = ((GNode)node).x - x;
+			dis.y = ((GNode)node).y - y;
+			if(dis.length() < GNode.R){
 				n = (GNode)node;
 				break;
 			}
@@ -37,12 +38,14 @@ public class GGraph extends Graph{
 		return n;
 	}
 	
-	@Override
 	public void addNode(int x, int y) {
 		// check intersection with other nodes
 		boolean intersect = false;
+		Vector2 dis = Vector2.Zero();
 		for(Node node : nodes) {
-			if(distance(node.getX(), node.getY(), x, y) < (GNode.R<<1)){
+			dis.x = ((GNode)node).x - x;
+			dis.y = ((GNode)node).y - y;
+			if(dis.length() < (GNode.R<<1)){
 				intersect = true;
 				break;
 			}
@@ -50,9 +53,14 @@ public class GGraph extends Graph{
 		if(intersect) return;
 		
 		// check whether 3 point on the same line
-		
-		nodes.add(new GNode(this, nextNodeID++, x, y));
+		nodes.add(new GNode(this, nodeCount++, x, y));
 		adjList.add(new ArrayList<Integer>());
+	}
+	
+	public void deleteNode() throws Exception {
+		super.deleteNode(selectedNode.getId());
+		selectedNode.remove();
+		selectedNode = null;
 	}
 	
 	private void addEdge(GNode n1, GNode n2) {
@@ -64,9 +72,19 @@ public class GGraph extends Graph{
 		adjList.get(n1.getId()).add(n2.getId());
 	}
 	
+	public void deleteEdge() throws Exception {
+		super.deleteEdge(selectedEdge.getFrom(), selectedEdge.getTo());
+		selectedEdge.remove();
+		selectedEdge = null;
+	}
+	
+	void setSelectedEdge(GEdge e) {
+		selectedEdge = e;
+	}
+	
 	private boolean checkCornerClicked(int x, int y) {
-		if(x<=GNode.R || x>=s.drawPane.getWidth()-GNode.R ||
-			y<=GNode.R || y>=s.drawPane.getHeight()-GNode.R) {
+		if(x<=GNode.R || x>=drawPane.getWidth()-GNode.R ||
+			y<=GNode.R || y>=drawPane.getHeight()-GNode.R) {
 			return true;
 		}
 		return false;
@@ -90,11 +108,11 @@ public class GGraph extends Graph{
 				n.toggleSelected();
 			}
 		}else if(!checkCornerClicked(x, y)){
-			// if not -> create new node
-			addNode(x, y);
 			if(selectedNode != null) {
 				selectedNode.toggleSelected();
 				selectedNode = null;
+			}else {
+				addNode(x, y);
 			}
 		}
 		

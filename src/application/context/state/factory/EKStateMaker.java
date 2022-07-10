@@ -10,7 +10,7 @@ import application.graph.Edge;
 
 public class EKStateMaker extends StateMaker{
 
-	private static final ArrayList<Step> steps = new ArrayList<Step>(Arrays.asList(
+	public static final ArrayList<Step> steps = new ArrayList<Step>(Arrays.asList(
 			new Step("initMaxFlow", 0),
 			new Step("while there is an augmenting path", 0),
 			new Step("find an augmenting path using BFS", 1),

@@ -1,8 +1,9 @@
 package application.ui;
 
 import application.graph.Edge;
-import javafx.scene.shape.Line;
+import application.ui.math.Vector2;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Rotate;
 
 public class GEdge extends Edge{
 	
@@ -13,51 +14,44 @@ public class GEdge extends Edge{
 	
 	GGraph g;
 	GNode nFrom, nTo;
-	Line line;
+	Arrow line;
 	Text label;
 	
 	public GEdge(GGraph g, GNode n1, GNode n2) {
-		super(n1.getId(), n2.getId());
+		super(n1.getId(), n2.getId(), 1);
 		this.g = g;
 		nFrom = n1; nTo = n2;
-		capacity = 1;
-		line = null;
-		label = null;
 		draw();
 	}
 	
 	public void draw() {
 		
-		if(line != null) g.s.drawPane.getChildren().remove(line); 
-		if(label != null) g.s.drawPane.getChildren().remove(label);
+		if(line != null) g.drawPane.getChildren().remove(line); 
+		if(label != null) g.drawPane.getChildren().remove(label);
+				
+		Vector2 dis = new Vector2(nTo.x-nFrom.x, nTo.y-nFrom.y);
+		double rat = (GNode.R+2)/dis.length();
+		int disX = (int)(rat * (nTo.x-nFrom.x));
+		int disY = (int)(rat * (nTo.y-nFrom.y));
 		
-		int fromX = nFrom.getX();
-		int fromY = nFrom.getY();		
-		int toX = nTo.getX();
-		int toY = nTo.getY();
-		
-		double dis = GGraph.distance(fromX, fromY, toX, toY);
-		double rat = GNode.R/dis;
-		int disX = (int)(rat * (toX-fromX));
-		int disY = (int)(rat * (toY-fromY));
-		
-		line = new Line(
-				fromX + disX, fromY + disY,
-				toX - disX, toY - disY);
+		line = new Arrow(
+				nFrom.x + disX, nFrom.y + disY,
+				nTo.x - disX, nTo.y - disY);
 		
 		label = new Text(
-				(nFrom.getX() + nTo.getX())>>1,
-				(nFrom.getY() + nTo.getY())>>1,
-				Long.valueOf(capacity).toString()
+				(nFrom.x + nTo.x)>>1,
+				(nFrom.y + nTo.y)>>1,
+				Long.valueOf(getCapacity()).toString()
 				);
 		
-		g.s.drawPane.getChildren().addAll(line, label);
+		label.getTransforms().add(new Rotate(dis.getAlpha(), (nFrom.x + nTo.x)>>1, (nFrom.y + nTo.y)>>1));
+		
+		g.drawPane.getChildren().addAll(line, label);
 		
 	}
 	
 	public void remove() {
-		g.s.drawPane.getChildren().removeAll(line, label);
-		g.edges.remove(this);
+		g.drawPane.getChildren().removeAll(line, label);
 	}
 
 }
