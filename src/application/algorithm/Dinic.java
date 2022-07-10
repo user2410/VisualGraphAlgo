@@ -143,10 +143,10 @@ public class Dinic extends Algorithm {
 			path.clear();
 			while ((pushed = dfs(s, Long.MAX_VALUE, path)) > 0) {
 				
-				addState(stMaker.makeState3(this, pushed));
+				addState(stMaker.makeState3(this, pushed, path));
 				
 				for(Edge edge : path) {
-					addState(stMaker.makeState4(this, pushed, edge));
+					addState(stMaker.makeState4(this, pushed, edge, path));
 				}
 				
 				maxFlow += pushed;

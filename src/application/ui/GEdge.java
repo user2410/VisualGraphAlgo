@@ -2,6 +2,7 @@ package application.ui;
 
 import application.graph.Edge;
 import application.ui.math.Vector2;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 
@@ -48,6 +49,17 @@ public class GEdge extends Edge{
 		
 		g.drawPane.getChildren().addAll(line, label);
 		
+	}
+	
+	public void updateLabel(String newVal) {
+		label.setText(newVal);
+	}
+	
+	public void updateArrowColor(boolean selected) {
+		if(!selected)
+			line.setFill(Color.BLACK);
+		else
+			line.setFill(Color.CRIMSON);
 	}
 	
 	public void remove() {

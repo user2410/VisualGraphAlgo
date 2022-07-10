@@ -190,7 +190,7 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                   </Pane>
-                  <SplitPane fx:id="playbackPane" disable="true" dividerPositions="0.8" maxHeight="36.0" minHeight="36.0" prefHeight="160.0" prefWidth="200.0">
+                  <SplitPane fx:id="playbackPane" disable="true" dividerPositions="0.8" maxHeight="40.0" minHeight="40.0" prefHeight="160.0" prefWidth="200.0">
                     <items>
                         <HBox maxHeight="36.0" minWidth="36.0" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                            <children>
@@ -223,7 +223,7 @@
                               <Insets left="5.0" top="5.0" />
                            </padding>
                         </HBox>
-                        <Slider fx:id="speedSlider" maxWidth="136.0" minWidth="136.0">
+                        <Slider fx:id="speedSlider">
                            <padding>
                               <Insets left="2.0" right="2.0" />
                            </padding></Slider>

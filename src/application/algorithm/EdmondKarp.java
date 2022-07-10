@@ -95,9 +95,9 @@ public class EdmondKarp extends Algorithm {
 			for (int v = t; v != s; v = parent[v]) {
 				int u = parent[v];
 				rGraph[u][v] -= pathFlow;
-				addState(stMaker.makeState3(this, pathFlow, u, v, false));
+				addState(stMaker.makeState3(this, pathFlow, u, v, path, false));
 				rGraph[v][u] += pathFlow;
-				addState(stMaker.makeState3(this, pathFlow, v, u, true));
+				addState(stMaker.makeState3(this, pathFlow, v, u, path, true));
 			}
 			
 			maxFlow += pathFlow;
@@ -121,7 +121,7 @@ public class EdmondKarp extends Algorithm {
 			System.arraycopy(row, 0, RGraph[i], 0, n);
 		}
 		
-		return rGraph;
+		return RGraph;
 	}
 
 }

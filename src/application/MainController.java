@@ -2,15 +2,17 @@ package application;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import application.algorithm.Algorithm;
 import application.context.Context;
+import application.context.state.AlgoState;
 import application.context.state.Step;
 import application.context.state.factory.DinicStateMaker;
 import application.context.state.factory.EKStateMaker;
 import application.context.state.factory.FFStateMaker;
+import application.graph.Edge;
+import application.ui.GEdge;
 import application.ui.GGraph;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -23,8 +25,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
@@ -71,9 +72,9 @@ public class MainController implements Initializable {
 	@FXML
 	VBox algoStateArea;
 	@FXML
-	Text stateLine1;
+	Text algoStateLine1;
 	@FXML
-	Text stateLine2;
+	Text algoStateLine2;
 	@FXML
 	TreeView<String> algoStepTree;
 	
@@ -105,11 +106,34 @@ public class MainController implements Initializable {
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		isExploring = false;
 		tGraph = new GGraph(mainDrawPane);
-		context = new Context();
+		context = new Context(this);
 
 		initDrawPane();
-		initSlider(progressSlider);
-		initSlider(speedSlider);
+		
+		speedSlider.setMin(0.25);
+		speedSlider.setMax(2.0);
+		speedSlider.setMinorTickCount(1);
+		speedSlider.setMajorTickUnit(0.5);
+		speedSlider.setShowTickMarks(true);
+		speedSlider.setShowTickLabels(true);
+
+		speedSlider.valueChangingProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+				context.setSpeed(speedSlider.getValue());
+			}
+		});
+		
+		progressSlider.setMin(0);
+		progressSlider.setMinorTickCount(0);
+		progressSlider.setMajorTickUnit(1);
+		progressSlider.valueChangingProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+				context.setCurrentState((int)speedSlider.getValue());
+			}
+		});
+		
 		initAlgoArea();
 	}
 	
@@ -127,22 +151,6 @@ public class MainController implements Initializable {
 		mainDrawPane.addEventHandler(MouseEvent.MOUSE_CLICKED, eventHandler);
 	}
 
-	private void initSlider(Slider slider){
-		slider.setMin(0);
-		slider.setMax(100);
-//		slider.setMajorTickUnit(0.5);
-//      slider.setMinorTickCount(0);
-//      slider.setShowTickMarks(true);
-//      slider.setShowTickLabels(true);
-        slider.setMinHeight(Slider.USE_PREF_SIZE);
-
-        slider.valueChangingProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
-				System.out.println(slider.getValue());
-			}
-        });
-	}
 	
 	private void initAlgoArea() {
 		srcNodeInput.textProperty().addListener((arg0, oldVal, newVal)->{
@@ -236,20 +244,7 @@ public class MainController implements Initializable {
 	
 	@FXML
 	private void quitMenuClicked(ActionEvent event) {
-	
-		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-		alert.setTitle("Confirmation");
-		alert.setHeaderText("Do you want quit application ?");
-		alert.setContentText("Tip: You might want to save changes before exiting");
-		
-		ButtonType buttonTypeQuit = new ButtonType("Quit", ButtonData.YES);
-
-		alert.getButtonTypes().set(0,buttonTypeQuit);
-		Optional<ButtonType> result = alert.showAndWait();
-		if(result.get() == buttonTypeQuit) {			
-			Main.mainWindow.close();
-		}
-		
+		Main.closeProgram();
 	}
 	
 	@FXML
@@ -299,6 +294,11 @@ public class MainController implements Initializable {
 			
 			context.terminate();
 			
+			for(Edge e : tGraph.edges) {
+				((GEdge)e).updateLabel(Long.valueOf(e.getCapacity()).toString());
+				((GEdge)e).updateArrowColor(false);
+			}
+			
 			goBtn.setText("Go");
 		}else {
 			int srcNode = validateNodeInput(srcNodeInput.getText());
@@ -310,9 +310,14 @@ public class MainController implements Initializable {
 				algoSelector.setDisable(true);
 				srcNodeInput.setDisable(true);
 				sinkNodeInput.setDisable(true);
+				
 				Algorithm algo = Algorithm.makeAlgo(context, tGraph, srcNode, sinkNode, algoType);
 				context.setAlgo(algo);
 				context.exploreAlgo();
+				
+				progressSlider.setMax(context.getStateCount()-1);
+				progressSlider.setShowTickMarks(true);
+				
 				new Thread() {
 					@Override
 					public void run() {
@@ -350,6 +355,42 @@ public class MainController implements Initializable {
 		if(isExploring && !context.isPlaying()) {
 			context.next();
 		}
+	}
+	
+	
+	/*
+	 * Observer reactions
+	 * */
+	
+	public void reactToContext(AlgoState as) {
+		if(as==null) {
+			as = context.getStateAt(0);
+			playpauseBtn.fire();
+		}
+		
+		// update draw pane
+		long[][] rGraph = as.getrGraph();
+		ArrayList<Edge> path = as.getPath();
+		for(Edge e : tGraph.edges){
+			((GEdge)e).updateLabel(Long.valueOf(rGraph[e.getFrom()][e.getTo()]).toString()
+					+ '|' + Long.valueOf(rGraph[e.getTo()][e.getFrom()]).toString());
+			if(path!=null) ((GEdge)e).updateArrowColor(path.contains(e));
+		};
+		
+		// update progressSlider
+		progressSlider.setValue(context.getCurrentStateNum());
+		
+		// update algo Area
+		algoStateLine1.setText(as.getStateText1());
+		algoStateLine2.setText(as.getStateText2());
+		MultipleSelectionModel<TreeItem<String>> msm = algoStepTree.getSelectionModel();
+		int row = as.getStep().getStepnum();
+		if(row!=-1) msm.select(row);
+	}
+	
+	public void reactToGraph() {
+		// update graph tree
+		// update draw pane
 	}
 	
 }

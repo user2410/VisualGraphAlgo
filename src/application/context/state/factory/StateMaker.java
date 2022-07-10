@@ -25,7 +25,7 @@ public abstract class StateMaker {
 	public AlgoState makeStateFinal(Algorithm algo) {
 		String stateText1 = "Maximum flow = Minimum Cut from " + algo.getS() + " to " + algo.getT() + " is " + algo.getMaxFlow();
 		String stateText2 = "Edge(s) that cross(es) the ST-cut is/are highlighted.";
-		return new AlgoState(algo.getRGraph(), stateText1, stateText2, new Step("", -1));
+		return new AlgoState(algo.getRGraph(), stateText1, stateText2, new Step("", -1, -1));
 	}
 
 }
