@@ -128,9 +128,9 @@
                                  </HBox.margin>
                               </Label>
                               <Label text="Source" />
-                              <TextField prefWidth="30.0" />
+                              <TextField fx:id="srcNodeInput" prefWidth="30.0" />
                               <Label layoutX="87.0" layoutY="10.0" text="Sink" />
-                              <TextField layoutX="105.0" layoutY="10.0" maxWidth="30.0" />
+                              <TextField fx:id="sinkNodeInput" layoutX="105.0" layoutY="10.0" maxWidth="30.0" />
                               <Button fx:id="goBtn" mnemonicParsing="false" onAction="#goBtnClicked" text="Go" HBox.hgrow="NEVER">
                                  <HBox.margin>
                                     <Insets />
@@ -194,7 +194,7 @@
                     <items>
                         <HBox maxHeight="36.0" minWidth="36.0" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                            <children>
-                              <Button mnemonicParsing="false" styleClass="playback-control-btn" text="&lt;&lt;" textAlignment="CENTER">
+                              <Button fx:id="rewindBtn" mnemonicParsing="false" onAction="#rewindBtnHandler" styleClass="playback-control-btn" text="&lt;&lt;" textAlignment="CENTER">
                                  <HBox.margin>
                                     <Insets />
                                  </HBox.margin>
@@ -202,15 +202,15 @@
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
                               </Button>
-                              <Button mnemonicParsing="false" styleClass="playback-control-btn" text="||" textAlignment="CENTER">
+                              <Button fx:id="playpauseBtn" mnemonicParsing="false" onAction="#playpauseBtnHandler" styleClass="playback-control-btn" text="||" textAlignment="CENTER">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor></Button>
-                              <Button mnemonicParsing="false" styleClass="playback-control-btn" text="&gt;&gt;" textAlignment="CENTER">
+                              <Button fx:id="forwardBtn" mnemonicParsing="false" onAction="#forwardBtnHandler" styleClass="playback-control-btn" text="&gt;&gt;" textAlignment="CENTER">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor></Button>
-                              <Slider HBox.hgrow="ALWAYS">
+                              <Slider fx:id="progressSlider" HBox.hgrow="ALWAYS">
                                  <padding>
                                     <Insets top="5.0" />
                                  </padding>
@@ -223,7 +223,10 @@
                               <Insets left="5.0" top="5.0" />
                            </padding>
                         </HBox>
-                        <Slider maxWidth="136.0" minWidth="136.0" />
+                        <Slider fx:id="speedSlider" maxWidth="136.0" minWidth="136.0">
+                           <padding>
+                              <Insets left="2.0" right="2.0" />
+                           </padding></Slider>
                     </items>
                   </SplitPane>
               </items>
@@ -241,7 +244,7 @@
           </textFill>
         </Label>
         <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
-        <Label font="$x3" maxWidth="-1.0" text="Right status" textFill="$x4" HBox.hgrow="NEVER" />
+        <Label font="$x3" maxWidth="-1.0" text="Speed" textFill="$x4" HBox.hgrow="NEVER" />
       </children>
       <padding>
         <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />

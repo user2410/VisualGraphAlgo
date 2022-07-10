@@ -12,6 +12,8 @@ import application.context.state.factory.DinicStateMaker;
 import application.context.state.factory.EKStateMaker;
 import application.context.state.factory.FFStateMaker;
 import application.ui.GGraph;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -24,7 +26,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
@@ -48,12 +52,22 @@ public class MainController implements Initializable {
 	Pane mainDrawPane;			
 	@FXML
 	SplitPane playbackPane;		 
+	@FXML
+	Button playpauseBtn;
+	@FXML
+	Slider progressSlider;
+	@FXML
+	Slider speedSlider;
 	
 	@FXML
 	TreeTableView<String> graphTree;
-	@FXML
-	HBox algoSelector;
 	
+	@FXML
+	TextField srcNodeInput;
+	@FXML
+	TextField sinkNodeInput;
+	@FXML
+	HBox algoSelector;	
 	@FXML
 	VBox algoStateArea;
 	@FXML
@@ -74,9 +88,7 @@ public class MainController implements Initializable {
 	
 	boolean isExploring;	
 	GGraph tGraph;
-	Algorithm algo;
 	Algorithm.Type algoType;
-	int srcNode, sinkNode; 
 	Context context;
 	
 	// Root nodes of treeview of each algorithm
@@ -96,7 +108,8 @@ public class MainController implements Initializable {
 		context = new Context();
 
 		initDrawPane();
-		
+		initSlider(progressSlider);
+		initSlider(speedSlider);
 		initAlgoArea();
 	}
 	
@@ -114,7 +127,35 @@ public class MainController implements Initializable {
 		mainDrawPane.addEventHandler(MouseEvent.MOUSE_CLICKED, eventHandler);
 	}
 
+	private void initSlider(Slider slider){
+		slider.setMin(0);
+		slider.setMax(100);
+//		slider.setMajorTickUnit(0.5);
+//      slider.setMinorTickCount(0);
+//      slider.setShowTickMarks(true);
+//      slider.setShowTickLabels(true);
+        slider.setMinHeight(Slider.USE_PREF_SIZE);
+
+        slider.valueChangingProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+				System.out.println(slider.getValue());
+			}
+        });
+	}
+	
 	private void initAlgoArea() {
+		srcNodeInput.textProperty().addListener((arg0, oldVal, newVal)->{
+			if(validateNodeInput(srcNodeInput.getText()) == Integer.MAX_VALUE) {
+				srcNodeInput.setText("");
+			}
+		});
+		sinkNodeInput.textProperty().addListener((arg0, oldVal, newVal)->{
+			if(validateNodeInput(sinkNodeInput.getText()) == Integer.MAX_VALUE) {
+				sinkNodeInput.setText("");
+			}
+		});
+		
 		ffRootNode = initAlgoSteps(Algorithm.Type.FF);
 		ekRootNode = initAlgoSteps(Algorithm.Type.EK);
 		dRootNode = initAlgoSteps(Algorithm.Type.DINIC);
@@ -129,12 +170,15 @@ public class MainController implements Initializable {
 				// System.out.println(r.getText());
 				switch(r.getText()) {
 				case "Ford-Fulkerson":
+					algoType = Algorithm.Type.FF;
 					algoStepTree.setRoot(ffRootNode);
 					break;
 				case "Edmond-Karp":
+					algoType = Algorithm.Type.EK;
 					algoStepTree.setRoot(ekRootNode);
 					break;
 				case "Dinic":
+					algoType = Algorithm.Type.DINIC;
 					algoStepTree.setRoot(dRootNode);
 					break;
 				}
@@ -147,6 +191,18 @@ public class MainController implements Initializable {
 		((RadioButton)list.get(0)).setSelected(true);
 		algoStepTree.setRoot(ffRootNode);
 		algoStepTree.setShowRoot(false);
+		algoType = Algorithm.Type.FF;
+	}
+	
+	private int validateNodeInput(String input) {
+		try {
+			int c = Integer.parseInt(input);
+			if(c>=0 && c<tGraph.getNodeCount())
+				return c;
+		}catch(NumberFormatException e) {			
+			return Integer.MAX_VALUE;
+		}
+		return Integer.MAX_VALUE;
 	}
 	
 	private TreeItem<String> initAlgoSteps(Algorithm.Type type) {
@@ -171,37 +227,6 @@ public class MainController implements Initializable {
 			}
 		});
 		return root;
-	}
-	
-	@FXML
-	private void goBtnClicked() {
-		if(!isExploring) {
-			isExploring = true;
-			playbackPane.setDisable(false);
-			graphTree.setDisable(true);
-			algoSelector.setDisable(true);
-			
-			context.terminate();
-			
-			goBtn.setText("Stop");
-		}else {
-			isExploring = false;
-			playbackPane.setDisable(true);
-			graphTree.setDisable(false);
-			algoSelector.setDisable(false);
-			
-			algo = Algorithm.makeAlgo(context, tGraph, srcNode, sinkNode, algoType);
-			context.setAlgo(algo);
-			context.exploreAlgo();
-			new Thread() {
-				@Override
-				public void run() {
-					setName("Algo_playback_Thread");
-					context.play();
-				}
-			}.start();
-			goBtn.setText("Go");				
-		}
 	}
 	
 	
@@ -254,6 +279,77 @@ public class MainController implements Initializable {
 		scene1 = new Scene(layout1,600,200);
 		window.setScene(scene1);
 		window.show();
+	}
+	
+	
+	/*
+	 * FXML Handlers
+	 * */
+	
+
+	@FXML
+	private void goBtnClicked() {
+		if(isExploring) {
+			isExploring = false;
+			playbackPane.setDisable(true);
+			graphTree.setDisable(false);
+			algoSelector.setDisable(false);
+			srcNodeInput.setDisable(false);
+			sinkNodeInput.setDisable(false);
+			
+			context.terminate();
+			
+			goBtn.setText("Go");
+		}else {
+			int srcNode = validateNodeInput(srcNodeInput.getText());
+			int sinkNode = validateNodeInput(sinkNodeInput.getText());
+			if(srcNode!=Integer.MAX_VALUE && sinkNode != Integer.MAX_VALUE) {
+				isExploring = true;
+				playbackPane.setDisable(false);
+				graphTree.setDisable(true);
+				algoSelector.setDisable(true);
+				srcNodeInput.setDisable(true);
+				sinkNodeInput.setDisable(true);
+				Algorithm algo = Algorithm.makeAlgo(context, tGraph, srcNode, sinkNode, algoType);
+				context.setAlgo(algo);
+				context.exploreAlgo();
+				new Thread() {
+					@Override
+					public void run() {
+						setName("Algo_playback_Thread");
+						context.play();
+					}
+				}.start();
+				goBtn.setText("Stop");
+			}
+		}
+	}
+	
+	@FXML
+	private void playpauseBtnHandler() {
+		if(isExploring) {
+			if(context.isPlaying()) {
+				context.pause();
+				playpauseBtn.setText("|>");
+			}else {
+				context.resume();
+				playpauseBtn.setText("||");				
+			}
+		}
+	}
+	
+	@FXML
+	private void rewindBtnHandler() {
+		if(isExploring && !context.isPlaying()) {
+			context.prev();
+		}
+	}
+	
+	@FXML
+	private void forwardBtnHandler() {
+		if(isExploring && !context.isPlaying()) {
+			context.next();
+		}
 	}
 	
 }

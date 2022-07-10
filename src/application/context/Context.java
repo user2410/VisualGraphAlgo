@@ -69,6 +69,10 @@ public class Context{
 		return states.get(currentState.get());
 	}
 	
+	public int getStateCount() {
+		return states.size();
+	}
+	
 	public synchronized AlgoState next() {
 		AlgoState st = null;
 		if(currentState.get() + 1 < states.size()) {
@@ -85,7 +89,7 @@ public class Context{
 		if(currentState.get() > 0) {
 			int cur = currentState.get(); 
 			st = states.get(cur);
-			currentState.set(cur+1);
+			currentState.set(cur-1);
 		}
 		
 		return st;
@@ -104,11 +108,13 @@ public class Context{
 		notify();
 	}
 	
-	public synchronized void togglePlaying() {
-		boolean _isPlaying = isPlaying.get();
-		isPlaying.set(!_isPlaying);
-		if(!_isPlaying)
-			notify();
+	public void pause() {
+		isPlaying.set(false);
+	}
+	
+	public synchronized void resume() {
+		isPlaying.set(true);
+		notify();
 	}
 	
 	public synchronized void play() {
