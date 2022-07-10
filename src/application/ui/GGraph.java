@@ -115,6 +115,22 @@ public class GGraph extends Graph{
 				addNode(x, y);
 			}
 		}
-		
 	}
+	
+	public void fromGraph(Graph g) {
+		nodeCount = 0;
+		
+		nodes.forEach(n->((GNode)n).remove());
+		nodes.clear();
+		g.nodes.forEach(n->nodes.add(new GNode(this, nodeCount++, n.getX(), n.getY())));
+		
+		edges.forEach(e->((GEdge)e).remove());
+		edges.clear();
+		g.edges.forEach(e->edges.add(new GEdge(this, (GNode)nodes.get(e.getFrom()), (GNode)nodes.get(e.getFrom()))));
+		
+		adjList = new ArrayList<ArrayList<Integer>>(g.adjList);
+		
+		System.gc();
+	}
+	
 }

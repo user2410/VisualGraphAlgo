@@ -96,7 +96,7 @@ public class Context{
 	}
 	
 	public void setDelay(long delay) {
-		this.delay.set(delay);;
+		this.delay.set(delay);
 	}
 	
 	public synchronized void terminate() {

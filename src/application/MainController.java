@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import application.algorithm.Algorithm;
+import application.context.Context;
 import application.context.state.Step;
 import application.context.state.factory.DinicStateMaker;
 import application.context.state.factory.EKStateMaker;
@@ -72,7 +73,11 @@ public class MainController implements Initializable {
 	 * */
 	
 	boolean isExploring;	
-	GGraph tGraph;			
+	GGraph tGraph;
+	Algorithm algo;
+	Algorithm.Type algoType;
+	int srcNode, sinkNode; 
+	Context context;
 	
 	// Root nodes of treeview of each algorithm
 	TreeItem<String> ffRootNode = null;
@@ -88,11 +93,11 @@ public class MainController implements Initializable {
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		isExploring = false;
 		tGraph = new GGraph(mainDrawPane);
+		context = new Context();
+
 		initDrawPane();
 		
 		initAlgoArea();
-		
-		initGoBtn();
 	}
 	
 	private void initDrawPane() {
@@ -168,22 +173,35 @@ public class MainController implements Initializable {
 		return root;
 	}
 	
-	private void initGoBtn() {
-		goBtn.setOnAction(e -> {
-			if(!isExploring) {
-				isExploring = true;
-				playbackPane.setDisable(false);
-				graphTree.setDisable(true);
-				algoSelector.setDisable(true);
-				goBtn.setText("Stop");
-			}else {
-				isExploring = false;
-				playbackPane.setDisable(true);
-				graphTree.setDisable(false);
-				algoSelector.setDisable(false);
-				goBtn.setText("Go");				
-			}
-		});
+	@FXML
+	private void goBtnClicked() {
+		if(!isExploring) {
+			isExploring = true;
+			playbackPane.setDisable(false);
+			graphTree.setDisable(true);
+			algoSelector.setDisable(true);
+			
+			context.terminate();
+			
+			goBtn.setText("Stop");
+		}else {
+			isExploring = false;
+			playbackPane.setDisable(true);
+			graphTree.setDisable(false);
+			algoSelector.setDisable(false);
+			
+			algo = Algorithm.makeAlgo(context, tGraph, srcNode, sinkNode, algoType);
+			context.setAlgo(algo);
+			context.exploreAlgo();
+			new Thread() {
+				@Override
+				public void run() {
+					setName("Algo_playback_Thread");
+					context.play();
+				}
+			}.start();
+			goBtn.setText("Go");				
+		}
 	}
 	
 	
@@ -192,7 +210,7 @@ public class MainController implements Initializable {
 	 * */
 	
 	@FXML
-	private void quitMenuClicked(ActionEvent event ) {
+	private void quitMenuClicked(ActionEvent event) {
 	
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 		alert.setTitle("Confirmation");

@@ -90,9 +90,9 @@
     </MenuBar>
     <SplitPane dividerPositions="0.3" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
-            <SplitPane dividerPositions="0.3555" maxWidth="350.0" minWidth="300.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" SplitPane.resizableWithParent="false">
+            <SplitPane dividerPositions="0.4" maxWidth="350.0" minWidth="300.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" SplitPane.resizableWithParent="false">
               <items>
-                  <VBox prefHeight="200.0" prefWidth="100.0">
+                  <VBox minHeight="217.0" prefHeight="200.0" prefWidth="100.0">
                      <children>
                         <Label alignment="CENTER" style="&#10;" text="Graph" textAlignment="CENTER" wrapText="false">
                            <font>
@@ -115,22 +115,25 @@
                         </TreeTableView>
                      </children>
                   </VBox>
-                  <VBox layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0">
+                  <VBox layoutX="10.0" layoutY="10.0" minHeight="328.0" prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <HBox prefHeight="36.0" prefWidth="200.0">
+                        <HBox alignment="CENTER" prefHeight="36.0" prefWidth="200.0" spacing="9.0">
                            <children>
                               <Label alignment="CENTER" minWidth="60.0" style="&#10;" text="Algorithm" textAlignment="CENTER" textFill="#111010" wrapText="false" HBox.hgrow="ALWAYS">
                                  <font>
                                     <Font size="15.0" fx:id="x111" />
                                  </font>
                                  <HBox.margin>
-                                    <Insets left="10.0" top="7.0" />
+                                    <Insets />
                                  </HBox.margin>
                               </Label>
-                              <Pane prefHeight="200.0" prefWidth="150.0" HBox.hgrow="ALWAYS" />
-                              <Button fx:id="goBtn" mnemonicParsing="false" text="Go" HBox.hgrow="NEVER">
+                              <Label text="Source" />
+                              <TextField prefWidth="30.0" />
+                              <Label layoutX="87.0" layoutY="10.0" text="Sink" />
+                              <TextField layoutX="105.0" layoutY="10.0" maxWidth="30.0" />
+                              <Button fx:id="goBtn" mnemonicParsing="false" onAction="#goBtnClicked" text="Go" HBox.hgrow="NEVER">
                                  <HBox.margin>
-                                    <Insets right="10.0" top="7.0" />
+                                    <Insets />
                                  </HBox.margin>
                               </Button>
                            </children>
@@ -199,11 +202,11 @@
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
                               </Button>
-                              <Button mnemonicParsing="false" text="||" textAlignment="CENTER">
+                              <Button mnemonicParsing="false" styleClass="playback-control-btn" text="||" textAlignment="CENTER">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor></Button>
-                              <Button mnemonicParsing="false" text="&gt;&gt;" textAlignment="CENTER">
+                              <Button mnemonicParsing="false" styleClass="playback-control-btn" text="&gt;&gt;" textAlignment="CENTER">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor></Button>
