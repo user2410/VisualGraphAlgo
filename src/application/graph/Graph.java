@@ -132,6 +132,16 @@ public class Graph implements Serializable{
 		return g;
 	}
 	
+	public void clear() {
+		nodeCount = 0;
+		nodes.clear();
+		edges.clear();
+		for(ArrayList<Integer> l : adjList) {
+			l.clear();
+		}
+		adjList.clear();
+	}
+	
 	@Override
 	public String toString() {
 		return "Adjacent list: \n" + adjList + "\n Edges:\n" + edges;

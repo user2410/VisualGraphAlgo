@@ -2,6 +2,7 @@ package application;
 
 import java.util.Optional;
 
+import application.graph.Graph;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

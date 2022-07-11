@@ -64,9 +64,9 @@
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
-        <Menu mnemonicParsing="false" text="File">
+        <Menu mnemonicParsing="false" text="_File">
           <items>
-            <MenuItem mnemonicParsing="false" text="Clear" />
+            <MenuItem mnemonicParsing="false" onAction="#clearMenuClicked" text="Clear" />
             <Menu mnemonicParsing="false" text="Open examples" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#saveMenuClicked" text="Save" />
@@ -74,14 +74,14 @@
             <MenuItem mnemonicParsing="false" onAction="#quitMenuClicked" text="Quit" />
           </items>
         </Menu>
-        <Menu mnemonicParsing="false" text="Edit">
+        <Menu mnemonicParsing="false" text="_Edit">
           <items>
             <MenuItem mnemonicParsing="false" text="Delete" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="Unselect All" />
           </items>
         </Menu>
-        <Menu mnemonicParsing="false" text="Contact">
+        <Menu mnemonicParsing="false" text="_Contact">
           <items>
             <MenuItem mnemonicParsing="false" onAction="#contactMenuClicked" text="About Team" />
           </items>
@@ -103,16 +103,13 @@
                            </VBox.margin>
                         </Label>
                         <Separator prefWidth="200.0" />
-                        <TreeTableView fx:id="graphTree" editable="true" prefHeight="200.0" prefWidth="200.0" showRoot="false" sortMode="ONLY_FIRST_LEVEL" VBox.vgrow="ALWAYS">
+                        <TableView prefHeight="200.0" prefWidth="200.0">
                           <columns>
-                            <TreeTableColumn prefWidth="97.0" text="Node" />
-                            <TreeTableColumn prefWidth="125.0" text="Capacity" />
-                              <TreeTableColumn prefWidth="76.0" text="Remove" />
+                            <TableColumn prefWidth="75.0" text="Node from" />
+                            <TableColumn prefWidth="75.0" text="Node to" />
+                              <TableColumn prefWidth="75.0" text="Weight" />
                           </columns>
-                           <columnResizePolicy>
-                              <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                           </columnResizePolicy>
-                        </TreeTableView>
+                        </TableView>
                      </children>
                   </VBox>
                   <VBox layoutX="10.0" layoutY="10.0" minHeight="328.0" prefHeight="200.0" prefWidth="100.0">

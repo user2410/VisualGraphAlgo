@@ -63,7 +63,7 @@ public class MainController implements Initializable {
 	Slider speedSlider;
 	
 	@FXML
-	TreeTableView<String> graphTree;
+	TreeView<String> graphTree;
 	
 	@FXML
 	TextField srcNodeInput;
@@ -105,7 +105,7 @@ public class MainController implements Initializable {
 
 	
 	/*
-	 * Methods for initialization
+	 * Initialization
 	 * */
 	
 	@Override
@@ -251,7 +251,12 @@ public class MainController implements Initializable {
 	 * */
 	
 	@FXML
-	private void quitMenuClicked(ActionEvent event) {
+	private void clearMenuClicked() {
+		tGraph.clear();
+	}
+	
+	@FXML
+	private void quitMenuClicked() {
 		Main.closeProgram();
 	}
 	
@@ -306,7 +311,7 @@ public class MainController implements Initializable {
 			
 			for(Edge e : tGraph.edges) {
 				((GEdge)e).updateLabel(Long.valueOf(e.getCapacity()).toString());
-				((GEdge)e).updateArrowColor(false);
+				((GEdge)e).setSelected(false);
 			}
 			
 			goBtn.setText("Go");
@@ -402,7 +407,7 @@ public class MainController implements Initializable {
 		for(Edge e : tGraph.edges){
 			((GEdge)e).updateLabel(Long.valueOf(rGraph[e.getFrom()][e.getTo()]).toString()
 					+ '|' + Long.valueOf(rGraph[e.getTo()][e.getFrom()]).toString());
-			if(path!=null) ((GEdge)e).updateArrowColor(path.contains(e));
+			if(path!=null) ((GEdge)e).setSelected(path.contains(e));
 		};
 		
 		// update progressSlider
@@ -414,11 +419,8 @@ public class MainController implements Initializable {
 		MultipleSelectionModel<TreeItem<String>> msm = algoStepTree.getSelectionModel();
 		int row = as.getStep().getStepnum();
 		if(row!=-1) msm.select(row);
-	}
-	
-	public void reactToGraph() {
-		// update graph tree
-		// update draw pane
+		else
+			msm.clearSelection();
 	}
 	
 }

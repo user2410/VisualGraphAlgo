@@ -12,23 +12,18 @@ public class GNode extends Node{
 	 */
 	private static final long serialVersionUID = 4572159178583259675L;
 	static final int	R = 18;
-	int			x, y;
 	GGraph		g;
 	Circle		c;
 	Text		label;
-	boolean		selected;
 	
 	public GNode(GGraph g, int id, int x, int y) {
-		super(id, x, y);
-		this.x = x;
-		this.y = y;		
+		super(id, x, y);	
 		this.g = g;
 		draw();
-		selected = false;
 	}
 	
 	public void draw() {
-		c = new Circle(x, y, R);
+		c = new Circle(getX(), getY(), R);
 		c.setFill(Color.WHITE);
 		c.setStroke(Color.BLACK);
 		String idStr = Integer.valueOf(getId()).toString();
@@ -36,13 +31,12 @@ public class GNode extends Node{
 		g.drawPane.getChildren().addAll(c, label);
 	}
 	
-	public void toggleSelected() {
-		if(selected) {	
-    		c.setFill(Color.WHITE);
+	public void setSelected(boolean selected) {
+		if(selected) {
+			c.setFill(Color.CHARTREUSE);		
 		}else {
-			c.setFill(Color.CHARTREUSE);			
+			c.setFill(Color.WHITE);
 		}
-		selected = !selected;
 	}
 	
 	public void remove() {

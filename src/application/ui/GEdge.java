@@ -22,30 +22,26 @@ public class GEdge extends Edge{
 		super(n1.getId(), n2.getId(), 1);
 		this.g = g;
 		nFrom = n1; nTo = n2;
-		draw();
-	}
-	
-	public void draw() {
 		
 		if(line != null) g.drawPane.getChildren().remove(line); 
 		if(label != null) g.drawPane.getChildren().remove(label);
 				
-		Vector2 dis = new Vector2(nTo.x-nFrom.x, nTo.y-nFrom.y);
+		Vector2 dis = new Vector2(nTo.getX()-nFrom.getX(), nTo.getY()-nFrom.getY());
 		double rat = (GNode.R+2)/dis.length();
-		int disX = (int)(rat * (nTo.x-nFrom.x));
-		int disY = (int)(rat * (nTo.y-nFrom.y));
+		int disX = (int)(rat * (nTo.getX()-nFrom.getX()));
+		int disY = (int)(rat * (nTo.getY()-nFrom.getY()));
 		
 		line = new Arrow(
-				nFrom.x + disX, nFrom.y + disY,
-				nTo.x - disX, nTo.y - disY);
+				nFrom.getX() + disX, nFrom.getY() + disY,
+				nTo.getX() - disX, nTo.getY() - disY);
 		
 		label = new Text(
-				(nFrom.x + nTo.x)>>1,
-				(nFrom.y + nTo.y)>>1,
+				(nFrom.getX() + nTo.getX())>>1,
+				(nFrom.getY() + nTo.getY())>>1,
 				Long.valueOf(getCapacity()).toString()
 				);
 		
-		label.getTransforms().add(new Rotate(dis.getAlpha(), (nFrom.x + nTo.x)>>1, (nFrom.y + nTo.y)>>1));
+		label.getTransforms().add(new Rotate(dis.getAlpha(), (nFrom.getX() + nTo.getX())>>1, (nFrom.getY() + nTo.getY())>>1));
 		
 		g.drawPane.getChildren().addAll(line, label);
 		
@@ -55,11 +51,12 @@ public class GEdge extends Edge{
 		label.setText(newVal);
 	}
 	
-	public void updateArrowColor(boolean selected) {
-		if(!selected)
-			line.setFill(Color.BLACK);
-		else
+	public void setSelected(boolean selected) {
+		if(selected) {
 			line.setFill(Color.CRIMSON);
+		}else {
+			line.setFill(Color.BLACK);
+		}
 	}
 	
 	public void remove() {

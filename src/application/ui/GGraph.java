@@ -2,6 +2,7 @@ package application.ui;
 
 import java.util.ArrayList;
 
+import application.graph.Edge;
 import application.graph.Graph;
 import application.graph.Node;
 import application.ui.math.Vector2;
@@ -14,8 +15,8 @@ public class GGraph extends Graph{
 	 */
 	private static final long serialVersionUID = 4967818067696204778L;
 	Pane drawPane;
-	private GNode selectedNode;
-	private GEdge selectedEdge;
+	GNode selectedNode;
+	GEdge selectedEdge;
 	
 	public GGraph(Pane drawPane) {
 		super();
@@ -28,8 +29,8 @@ public class GGraph extends Graph{
 		GNode n = null;
 		Vector2 dis = Vector2.Zero();
 		for(Node node : nodes) {
-			dis.x = ((GNode)node).x - x;
-			dis.y = ((GNode)node).y - y;
+			dis.x = node.getX() - x;
+			dis.y = node.getY() - y;
 			if(dis.length() < GNode.R){
 				n = (GNode)node;
 				break;
@@ -43,8 +44,8 @@ public class GGraph extends Graph{
 		boolean intersect = false;
 		Vector2 dis = Vector2.Zero();
 		for(Node node : nodes) {
-			dis.x = ((GNode)node).x - x;
-			dis.y = ((GNode)node).y - y;
+			dis.x = node.getX() - x;
+			dis.y = node.getY() - y;
 			if(dis.length() < (GNode.R<<1)){
 				intersect = true;
 				break;
@@ -78,10 +79,6 @@ public class GGraph extends Graph{
 		selectedEdge = null;
 	}
 	
-	void setSelectedEdge(GEdge e) {
-		selectedEdge = e;
-	}
-	
 	private boolean checkCornerClicked(int x, int y) {
 		if(x<=GNode.R || x>=drawPane.getWidth()-GNode.R ||
 			y<=GNode.R || y>=drawPane.getHeight()-GNode.R) {
@@ -93,31 +90,57 @@ public class GGraph extends Graph{
 	public void processClick(int x, int y) {
 		// check if any node is clicked
 		GNode n = getNodeAt(x, y);
-		if(n != null) {
-			// if clicked -> toggle click that node
-			if(selectedNode != null) {
-				if(selectedNode == n) {
-					n.toggleSelected();
-				}else{
-					addEdge(selectedNode, n);
-					selectedNode.toggleSelected();
+		if(n != null) {	// a node clicked
+			if(selectedNode != null) { // a node is already selected
+				if(selectedNode != n) { // another node is clicked
+					int idx = edges.indexOf(new Edge(selectedNode.getId(), n.getId()));
+					if(idx != -1){ // selected edge is already created
+						Edge e = edges.get(idx); // the newly selected edge
+						if(selectedEdge != null) { // an edge is already selected
+							selectedEdge.setSelected(false);
+							if(selectedEdge != e) { // another edge is selected
+								selectedEdge = ((GEdge)e);
+								selectedEdge.setSelected(true);
+							}else { // the same edge is selected again
+								selectedEdge = null;
+							}
+						}else {  // newly selected edge
+    						selectedEdge = (GEdge)e;
+    						selectedEdge.setSelected(true);
+						}
+					}else {	// newly created edge
+						addEdge(selectedNode, n);
+						if(selectedEdge!=null) {
+							selectedEdge.setSelected(false);
+							selectedEdge = null;
+						}
+					}
 				}
+				selectedNode.setSelected(false);
 				selectedNode = null;
-			}else{
+			}else{	// no node is currently selected
 				selectedNode = n;
-				n.toggleSelected();
+				n.setSelected(true);
 			}
-		}else if(!checkCornerClicked(x, y)){
-			if(selectedNode != null) {
-				selectedNode.toggleSelected();
+		}else if(!checkCornerClicked(x, y)){ // free space clicked
+			if(selectedNode != null) {	// a node is already selected -> clear selection
+				selectedNode.setSelected(false);
 				selectedNode = null;
-			}else {
+			}else {	// create new node
 				addNode(x, y);
 			}
 		}
 	}
 	
-	public void fromGraph(Graph g) {
+	public GNode getSelectedNode() {
+		return selectedNode;
+	}
+
+	public GEdge getSelectedEdge() {
+		return selectedEdge;
+	}
+
+	public void buildFromGraph(Graph g) {
 		nodeCount = 0;
 		
 		nodes.forEach(n->((GNode)n).remove());
@@ -128,9 +151,26 @@ public class GGraph extends Graph{
 		edges.clear();
 		g.edges.forEach(e->edges.add(new GEdge(this, (GNode)nodes.get(e.getFrom()), (GNode)nodes.get(e.getFrom()))));
 		
+		for(ArrayList<Integer> l : adjList) {
+			l.clear();
+		}
+		adjList.clear();
 		adjList = new ArrayList<ArrayList<Integer>>(g.adjList);
 		
 		System.gc();
+	}
+	
+	@Override
+	public void clear() {
+		for(Node n : nodes) {
+			((GNode)n).remove();
+		}
+		
+		for(Edge e : edges) {
+			((GEdge)e).remove();
+		}
+		
+		super.clear();
 	}
 	
 }
