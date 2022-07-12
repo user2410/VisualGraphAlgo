@@ -31,6 +31,10 @@ public class GNode extends Node{
 		g.drawPane.getChildren().addAll(c, label);
 	}
 	
+	public void updateLabel(String newVal) {
+		label.setText(newVal);
+	}
+	
 	public void setSelected(boolean selected) {
 		if(selected) {
 			c.setFill(Color.CHARTREUSE);		

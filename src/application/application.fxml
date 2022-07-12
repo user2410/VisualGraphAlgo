@@ -32,35 +32,29 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<?import javafx.scene.*?>
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
-<?import javafx.scene.shape.Circle?>
-<?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<VBox prefHeight="600.0" prefWidth="1000.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainController">
+<VBox prefHeight="600.0" prefWidth="1000.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -69,16 +63,9 @@
             <MenuItem mnemonicParsing="false" onAction="#clearMenuClicked" text="Clear" />
             <Menu mnemonicParsing="false" text="Open examples" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" onAction="#saveMenuClicked" text="Save" />
+            <MenuItem mnemonicParsing="false" onAction="#saveMenuClicked" text="Save as" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#quitMenuClicked" text="Quit" />
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="_Edit">
-          <items>
-            <MenuItem mnemonicParsing="false" text="Delete" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Unselect All" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="_Contact">
@@ -90,7 +77,7 @@
     </MenuBar>
     <SplitPane dividerPositions="0.3" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
-            <SplitPane dividerPositions="0.4" maxWidth="350.0" minWidth="300.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" SplitPane.resizableWithParent="false">
+            <SplitPane dividerPositions="0.5" maxWidth="350.0" minWidth="300.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" SplitPane.resizableWithParent="false">
               <items>
                   <VBox minHeight="217.0" prefHeight="200.0" prefWidth="100.0">
                      <children>
@@ -103,13 +90,7 @@
                            </VBox.margin>
                         </Label>
                         <Separator prefWidth="200.0" />
-                        <TableView prefHeight="200.0" prefWidth="200.0">
-                          <columns>
-                            <TableColumn prefWidth="75.0" text="Node from" />
-                            <TableColumn prefWidth="75.0" text="Node to" />
-                              <TableColumn prefWidth="75.0" text="Weight" />
-                          </columns>
-                        </TableView>
+                        <TableView fx:id="graphTable" prefHeight="200.0" prefWidth="200.0" />
                      </children>
                   </VBox>
                   <VBox layoutX="10.0" layoutY="10.0" minHeight="328.0" prefHeight="200.0" prefWidth="100.0">
@@ -141,15 +122,18 @@
                               <RadioButton mnemonicParsing="false" text="Ford-Fulkerson" HBox.hgrow="ALWAYS">
                                  <font>
                                     <Font size="11.0" />
-                                 </font></RadioButton>
+                                 </font>
+                              </RadioButton>
                               <RadioButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Edmond-Karp">
                                  <font>
                                     <Font size="11.0" />
-                                 </font></RadioButton>
+                                 </font>
+                              </RadioButton>
                               <RadioButton layoutX="97.0" layoutY="10.0" mnemonicParsing="false" text="Dinic">
                                  <font>
                                     <Font size="11.0" />
-                                 </font></RadioButton>
+                                 </font>
+                              </RadioButton>
                            </children>
                         </HBox>
                         <Separator layoutX="10.0" layoutY="46.0" prefWidth="200.0" />
@@ -161,14 +145,16 @@
                                  </VBox.margin>
                                  <font>
                                     <Font size="10.0" />
-                                 </font></Text>
+                                 </font>
+                              </Text>
                               <Text fx:id="algoStateLine2" strokeType="OUTSIDE" strokeWidth="0.0">
                                  <VBox.margin>
                                     <Insets left="5.0" />
                                  </VBox.margin>
                                  <font>
                                     <Font size="10.0" />
-                                 </font></Text>
+                                 </font>
+                              </Text>
                               <Separator prefWidth="200.0" />
                               <TreeView fx:id="algoStepTree" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
                            </children>
@@ -237,7 +223,7 @@
             <Font size="11.0" fx:id="x3" />
           </font>
           <textFill>
-            <Color blue="0.625" green="0.625" red="0.625" fx:id="x4" />
+            <Color red="0.625" green="0.625" blue="0.625" fx:id="x4" />
           </textFill>
         </Label>
         <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />

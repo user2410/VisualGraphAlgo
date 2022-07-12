@@ -4,17 +4,21 @@ import java.util.Optional;
 
 import application.graph.Graph;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 public class Main extends Application{
 	
 	public static Stage mainWindow;
+	public static Scene mainScene;
 	
 	@Override
 	public void start(Stage primaryStage) {
@@ -25,13 +29,19 @@ public class Main extends Application{
 				closeProgram();
 			});
 			
-			Parent root = FXMLLoader.load(getClass().getResource("application.fxml"));
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("application.fxml"));
+			Parent root = fxmlLoader.load();
+			mainScene = new Scene(root, 1000, 600);
 			
-			Scene scene = new Scene(root, 1000, 600);
+			mainScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+
+			MainController mc = fxmlLoader.getController();
+			mainScene.setOnKeyPressed(e->{
+				if(e.getCode() == KeyCode.DELETE)
+					mc.handleDeleteKeyPressed();
+			});
 			
-			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-			
-			mainWindow.setScene(scene);
+			mainWindow.setScene(mainScene);
 			mainWindow.setTitle("JavaFx demo");
 			mainWindow.show();
 		} catch(Exception e) {

@@ -29,23 +29,18 @@ public class Graph implements Serializable{
 		if(id>=0 && id<nodeCount) {
 			nodes.remove(id);
 			adjList.remove(id);
-			adjList.forEach(a -> a.removeIf(e -> e==id));
 			edges.removeIf(e->(e.getFrom()==id || e.getTo()==id));
 			for(int i=id; i<nodes.size(); i++) {
 				nodes.get(i).id--;
-				for(int j=0; j<adjList.size(); j++) {
-					ArrayList<Integer> a = adjList.get(j);
-					for(int k=0; k<a.size(); j++) {
-						if(a.get(k) == i+1) {
-							a.set(k, Integer.valueOf(i));
-							break;
-						}
-					}
+				for(Edge e : edges) {
+					if(e.from == i+1) e.from--;
+					if(e.to == i+1) e.to--;
 				}
-				edges.forEach(e->{
-					if(e.from == id+1) e.from--;
-					if(e.to == id+1) e.to--;
-				});
+			}
+			// rebuild adjList
+			for(ArrayList<Integer> list : adjList) {list.clear();}
+			for(Edge e : edges) {
+				adjList.get(e.getFrom()).add(e.getTo());
 			}
 			nodeCount--;
 		}else {

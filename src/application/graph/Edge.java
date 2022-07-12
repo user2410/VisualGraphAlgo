@@ -38,12 +38,24 @@ public class Edge implements Serializable{
 		return from;
 	}
 
+	public void setFrom(int from) {
+		this.from = from;
+	}
+
 	public int getTo() {
 		return to;
 	}
 
+	public void setTo(int to) {
+		this.to = to;
+	}
+
 	public long getCapacity() {
 		return capacity;
+	}
+
+	public void setCapacity(long capacity) {
+		this.capacity = capacity;
 	}
 
 	@Override

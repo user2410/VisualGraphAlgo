@@ -15,8 +15,6 @@ import application.graph.Edge;
 import application.ui.GEdge;
 import application.ui.GGraph;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -31,11 +29,13 @@ import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableView;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -63,7 +63,7 @@ public class MainController implements Initializable {
 	Slider speedSlider;
 	
 	@FXML
-	TreeView<String> graphTree;
+	TableView<GEdge> graphTable;
 	
 	@FXML
 	TextField srcNodeInput;
@@ -111,7 +111,7 @@ public class MainController implements Initializable {
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		isExploring = false;
-		tGraph = new GGraph(mainDrawPane);
+		tGraph = new GGraph(mainDrawPane, graphTable);
 		context = new Context(this);
 
 		initDrawPane();
@@ -123,9 +123,9 @@ public class MainController implements Initializable {
 		speedSlider.setShowTickMarks(true);
 		speedSlider.setShowTickLabels(true);
 
-		speedSlider.valueChangingProperty().addListener(new ChangeListener<Boolean>() {
+		speedSlider.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
-			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+			public void handle(MouseEvent arg0) {
 				double value = speedSlider.getValue();
 				context.setSpeed(value);
 				rightStatusLine.setText("Speed: " + String.format("%.2f", value) + 'x');
@@ -135,9 +135,9 @@ public class MainController implements Initializable {
 		progressSlider.setMin(0);
 		progressSlider.setMinorTickCount(0);
 		progressSlider.setMajorTickUnit(1);
-		progressSlider.valueChangingProperty().addListener(new ChangeListener<Boolean>() {
+		progressSlider.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
-			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+			public void handle(MouseEvent arg0) {
 				context.setCurrentState((int)progressSlider.getValue());
 			}
 		});
@@ -157,8 +157,8 @@ public class MainController implements Initializable {
 			}
 		};
 		mainDrawPane.addEventHandler(MouseEvent.MOUSE_CLICKED, eventHandler);
+		
 	}
-
 	
 	private void initAlgoArea() {
 		srcNodeInput.textProperty().addListener((arg0, oldVal, newVal)->{
@@ -300,7 +300,7 @@ public class MainController implements Initializable {
 		if(isExploring) {
 			isExploring = false;
 			playbackPane.setDisable(true);
-			graphTree.setDisable(false);
+			graphTable.setDisable(false);
 			algoSelector.setDisable(false);
 			srcNodeInput.setDisable(false);
 			sinkNodeInput.setDisable(false);
@@ -310,6 +310,7 @@ public class MainController implements Initializable {
 			context.terminate();
 			
 			for(Edge e : tGraph.edges) {
+				System.out.println("Resetting edges");
 				((GEdge)e).updateLabel(Long.valueOf(e.getCapacity()).toString());
 				((GEdge)e).setSelected(false);
 			}
@@ -321,7 +322,7 @@ public class MainController implements Initializable {
 			if(srcNode!=Integer.MAX_VALUE && sinkNode != Integer.MAX_VALUE) {
 				isExploring = true;
 				playbackPane.setDisable(false);
-				graphTree.setDisable(true);
+				graphTable.setDisable(true);
 				algoSelector.setDisable(true);
 				srcNodeInput.setDisable(true);
 				sinkNodeInput.setDisable(true);
@@ -385,7 +386,16 @@ public class MainController implements Initializable {
 			context.next();
 		}
 	}
-	
+
+	public void handleDeleteKeyPressed() {
+		try {
+			if(!tGraph.deleteNode())
+				tGraph.deleteEdge();
+		}catch(Exception e) {
+			// warn user
+			e.printStackTrace();
+		}
+	}
 	
 	/*
 	 * Observer reactions
