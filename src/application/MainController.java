@@ -1,5 +1,6 @@
 package application;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -12,6 +13,7 @@ import application.context.state.factory.DinicStateMaker;
 import application.context.state.factory.EKStateMaker;
 import application.context.state.factory.FFStateMaker;
 import application.graph.Edge;
+import application.graph.Graph;
 import application.ui.GEdge;
 import application.ui.GGraph;
 import javafx.application.Platform;
@@ -25,6 +27,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
@@ -34,8 +38,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -50,6 +52,9 @@ public class MainController implements Initializable {
 	/*
 	 * FXML objects
 	 * */
+	
+	@FXML
+	Menu openModelsMenu;
 	
 	@FXML
 	Pane mainDrawPane;			
@@ -114,8 +119,41 @@ public class MainController implements Initializable {
 		tGraph = new GGraph(mainDrawPane, graphTable);
 		context = new Context(this);
 
-		initDrawPane();
+		// init openModelsMenu
+		File[] fileLs= new File("./data/models/").listFiles();
+		for(File file : fileLs) {
+			String[] tokens = file.getName().split("[.]", -1);
+			if(!file.isDirectory() && tokens[tokens.length-1].equals("graph")) {
+				System.out.println("File: " + file.getName());
+				MenuItem model = new MenuItem(file.getName());
+				model.setOnAction(e->{
+					if(isExploring) return;
+					try {
+						Graph g = Graph.deserialize("data/models/"+file.getName());
+						tGraph.buildFromGraph(g);
+    				}catch(Exception ex) {
+    					// warn user
+    					ex.printStackTrace();
+    				}
+				});
+				openModelsMenu.getItems().add(model);
+			}
+		}
 		
+		// init draw pane
+		EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				if (!isExploring) {
+					int x = (int) e.getX();
+					int y = (int) e.getY();
+					tGraph.processClick(x, y);
+				}
+			}
+		};
+		mainDrawPane.addEventHandler(MouseEvent.MOUSE_CLICKED, eventHandler);
+		
+		// init sliders
 		speedSlider.setMin(0.25);
 		speedSlider.setMax(2.0);
 		speedSlider.setMinorTickCount(1);
@@ -143,21 +181,6 @@ public class MainController implements Initializable {
 		});
 		
 		initAlgoArea();
-	}
-	
-	private void initDrawPane() {
-		EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent e) {
-				if (!isExploring) {
-					int x = (int) e.getX();
-					int y = (int) e.getY();
-					tGraph.processClick(x, y);
-				}
-			}
-		};
-		mainDrawPane.addEventHandler(MouseEvent.MOUSE_CLICKED, eventHandler);
-		
 	}
 	
 	private void initAlgoArea() {
@@ -252,6 +275,7 @@ public class MainController implements Initializable {
 	
 	@FXML
 	private void clearMenuClicked() {
+		if(isExploring) return;
 		tGraph.clear();
 	}
 	
@@ -261,7 +285,8 @@ public class MainController implements Initializable {
 	}
 	
 	@FXML
-	private void saveMenuClicked(ActionEvent event) {		
+	private void saveMenuClicked(ActionEvent event) {
+		if(isExploring) return;
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 		alert.setTitle("Confirmation");
 		alert.setHeaderText("Do you want to save ?");
@@ -368,7 +393,7 @@ public class MainController implements Initializable {
 			}else {
 				if(context.getCurrentStateNum()+1 == context.getStateCount()) context.setCurrentState(0);
 				context.resume();
-				playpauseBtn.setText("||");				
+				playpauseBtn.setText("||");
 			}
 		}
 	}
@@ -388,6 +413,7 @@ public class MainController implements Initializable {
 	}
 
 	public void handleDeleteKeyPressed() {
+		if(isExploring) return;
 		try {
 			if(!tGraph.deleteNode())
 				tGraph.deleteEdge();

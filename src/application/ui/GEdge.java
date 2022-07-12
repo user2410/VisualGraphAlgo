@@ -24,8 +24,8 @@ public class GEdge extends Edge{
 	TextField capField;
 	Button deleteBtn;
 	
-	public GEdge(GGraph g, GNode n1, GNode n2) {
-		super(n1.getId(), n2.getId(), 1);
+	public GEdge(GGraph g, GNode n1, GNode n2, long cap) {
+		super(n1.getId(), n2.getId(), cap);
 		this.g = g;
 		nFrom = n1; nTo = n2;
 		
@@ -81,6 +81,10 @@ public class GEdge extends Edge{
 				e1.printStackTrace();
 			}
 		});
+	}
+	
+	public GEdge(GGraph g, GNode n1, GNode n2) {
+		this(g, n1, n2, 1);
 	}
 	
 	public void updateLabel(String newVal) {

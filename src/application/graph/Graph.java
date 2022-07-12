@@ -99,7 +99,7 @@ public class Graph implements Serializable{
 	public void serialize(String filename) throws IOException {
         
 		//Saving of object in a file
-		FileOutputStream file = new FileOutputStream("data/graphs/"+filename);
+		FileOutputStream file = new FileOutputStream(filename);
 		ObjectOutputStream out = new ObjectOutputStream(file);
 		
 		// Method for serialization of object
@@ -115,7 +115,7 @@ public class Graph implements Serializable{
 		Graph g = null;
 		
 		// Reading the object from a file
-		FileInputStream file = new FileInputStream("data/graphs/"+filename);
+		FileInputStream file = new FileInputStream(filename);
 		ObjectInputStream in = new ObjectInputStream(file);
 		
 		// Method for deserialization of object

@@ -11,7 +11,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 
@@ -202,23 +201,18 @@ public class GGraph extends Graph{
 		// graphTable.getSortOrder().add(graphTable.getColumns().get(0));
 	}
 
-	public void buildFromGraph(Graph g) {
-		nodeCount = 0;
-		
+	public void buildFromGraph(Graph g) {		
 		nodes.forEach(n->((GNode)n).remove());
-		nodes.clear();
-		g.nodes.forEach(n->nodes.add(new GNode(this, nodeCount++, n.getX(), n.getY())));
-		
 		edges.forEach(e->((GEdge)e).remove());
-		edges.clear();
-		g.edges.forEach(e->edges.add(new GEdge(this, (GNode)nodes.get(e.getFrom()), (GNode)nodes.get(e.getFrom()))));
-		
-		for(ArrayList<Integer> l : adjList) {
-			l.clear();
+		clear();
+		for(Node n : g.nodes) {
+			this.nodes.add(new GNode(this, nodeCount++, n.getX(), n.getY()));
 		}
-		adjList.clear();
+		for(Edge e : g.edges) {
+			this.edges.add(new GEdge(this, (GNode)nodes.get(e.getFrom()), (GNode)nodes.get(e.getTo()), e.getCapacity()));
+		}
 		adjList = new ArrayList<ArrayList<Integer>>(g.adjList);
-		
+		updateGraphTable();
 		System.gc();
 	}
 	
