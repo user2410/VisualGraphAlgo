@@ -25,7 +25,6 @@ public abstract class Algorithm {
 	
 	// State properties
 	protected StateMaker _stMaker;
-	protected AlgoState currentState;
 	protected Context context;
 	
 	// Algorithm constructor

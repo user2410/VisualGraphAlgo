@@ -144,14 +144,10 @@ public class Context{
 			oldSt = st;
 			try {
 				if(isPlaying.get()) {
-					isPlaying.set(false);
 					wait(delay.get());
-					isPlaying.set(true);
 				}
 				else {
-					isPlaying.set(false);
 					wait();
-					isPlaying.set(true);
 				}
 			} catch (InterruptedException e) {}
 			next();

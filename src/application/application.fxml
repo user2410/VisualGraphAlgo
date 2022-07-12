@@ -70,14 +70,12 @@
             <MenuItem mnemonicParsing="false" onAction="#clearMenuClicked" text="Clear" />
             <Menu fx:id="openModelsMenu" mnemonicParsing="false" text="Open models" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" onAction="#saveMenuClicked" text="Save as" />
-            <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#quitMenuClicked" text="Quit" />
           </items>
         </Menu>
-        <Menu mnemonicParsing="false" text="_Contact">
+        <Menu mnemonicParsing="false" text="_Info">
           <items>
-            <MenuItem mnemonicParsing="false" onAction="#contactMenuClicked" text="About Team" />
+            <MenuItem mnemonicParsing="false" onAction="#aboutMenuClicked" text="About..." />
           </items>
         </Menu>
       </menus>

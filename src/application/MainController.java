@@ -21,8 +21,10 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -45,6 +47,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class MainController implements Initializable {
@@ -294,24 +297,21 @@ public class MainController implements Initializable {
 	}
 	
 	@FXML
-	private void contactMenuClicked(ActionEvent event) {
-		Stage window = new Stage();
-		Text text  = new Text("Mọi thắc mắc về dự án xin liên hệ với chúng tôi về địa chỉ sau đây:");
-		Text text1 = new Text("Phạm Lê Danh Chính : chinh.pld2019xxxx@sis.hust.edu.vn" );
-		Text text2 = new Text("Nguyễn Kim Bảo     : bao.nk194486@sis.hust.edu.vn" );
-		Text text3 = new Text("Nguyễn Thị Hoài Thu: thu.nth2019xxxx@sis.hust.edu.vn");
-		text.setFont(new Font(20));
-		text.setFill(Color.RED);
-		text1.setFont(new Font(16));
-		text2.setFont(new Font(16));
-		text3.setFont(new Font(16));
-		Scene scene1;
-		VBox layout1 = new VBox();
-		
-		layout1.getChildren().addAll(text,text1,text2,text3);
-		scene1 = new Scene(layout1,600,200);
-		window.setScene(scene1);
-		window.show();
+	private void aboutMenuClicked(ActionEvent event) {
+		try {
+    		Stage window = new Stage();
+    		Parent root = new FXMLLoader(getClass().getResource("about.fxml")).load();
+    		Scene scene = new Scene(root, 600, 400);
+    		Button okBtn = (Button)scene.lookup("#okBtn");
+    		okBtn.setOnAction(e->{
+    			window.close();
+    		});
+    		window.setScene(scene);
+    		
+    		window.initModality(Modality.APPLICATION_MODAL);
+    		window.setTitle("About this app");
+    		window.show();
+		}catch(Exception e) {}
 	}
 	
 	
@@ -388,9 +388,11 @@ public class MainController implements Initializable {
 	private void playpauseBtnHandler() {
 		if(isExploring) {
 			if(context.isPlaying()) {
+				System.out.println("stop");
 				context.pause();
 				playpauseBtn.setText("|>");
 			}else {
+				System.out.println("resume");
 				if(context.getCurrentStateNum()+1 == context.getStateCount()) context.setCurrentState(0);
 				context.resume();
 				playpauseBtn.setText("||");

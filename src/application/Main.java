@@ -39,7 +39,7 @@ public class Main extends Application{
 			});
 			
 			mainWindow.setScene(mainScene);
-			mainWindow.setTitle("JavaFx demo");
+			mainWindow.setTitle("VisualGraphAlgo");
 			mainWindow.show();
 		} catch(Exception e) {
 			e.printStackTrace();
