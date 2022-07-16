@@ -25,6 +25,7 @@ public class GGraph extends Graph{
 	GNode selectedNode;
 	GEdge selectedEdge;
 	
+	@SuppressWarnings("unchecked")
 	public GGraph(Pane drawPane, TableView<GEdge> graphTable) {
 		super();
 		this.drawPane = drawPane;
@@ -43,6 +44,9 @@ public class GGraph extends Graph{
 		removeCol.setPrefWidth(80);
 		removeCol.setCellValueFactory(new PropertyValueFactory<>("deleteBtn"));
 		graphTable.getColumns().addAll(fromCol, toCol, capCol, removeCol);
+		graphTable.setOnSort(e->{
+			e.consume();
+		});
 		
 		selectedNode = null;
 		selectedEdge = null;

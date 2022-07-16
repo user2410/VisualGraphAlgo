@@ -26,7 +26,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
@@ -44,8 +43,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -285,15 +282,6 @@ public class MainController implements Initializable {
 	@FXML
 	private void quitMenuClicked() {
 		Main.closeProgram();
-	}
-	
-	@FXML
-	private void saveMenuClicked(ActionEvent event) {
-		if(isExploring) return;
-		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-		alert.setTitle("Confirmation");
-		alert.setHeaderText("Do you want to save ?");
-		alert.show();		
 	}
 	
 	@FXML
