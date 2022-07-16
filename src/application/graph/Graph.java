@@ -15,14 +15,37 @@ public class Graph implements Serializable{
 	 */
 	private static final long serialVersionUID = 2189050753577717068L;
 	
-	private int nextNodeID = 0;
+	protected int nodeCount = 0;
 	public ArrayList<Node> nodes = new ArrayList<Node>();
 	public ArrayList<ArrayList<Integer>> adjList = new ArrayList<ArrayList<Integer>>();
 	public ArrayList<Edge> edges = new ArrayList<Edge>();
 
-	public synchronized void addNode(int x, int y) {
-		nodes.add(new Node(x, y, nextNodeID++));
+	public void addNode(int x, int y) {
+		nodes.add(new Node(nodeCount++, x, y));
 		adjList.add(new ArrayList<Integer>());
+	}
+	
+	public void deleteNode(int id) throws Exception{
+		if(id>=0 && id<nodeCount) {
+			nodes.remove(id);
+			adjList.remove(id);
+			edges.removeIf(e->(e.getFrom()==id || e.getTo()==id));
+			for(int i=id; i<nodes.size(); i++) {
+				nodes.get(i).id--;
+				for(Edge e : edges) {
+					if(e.from == i+1) e.from--;
+					if(e.to == i+1) e.to--;
+				}
+			}
+			// rebuild adjList
+			for(ArrayList<Integer> list : adjList) {list.clear();}
+			for(Edge e : edges) {
+				adjList.get(e.getFrom()).add(e.getTo());
+			}
+			nodeCount--;
+		}else {
+			throw new Exception("Node " + id + " out of range [0~" + (nodeCount>0?nodeCount-1:0) +"]");
+		}
 	}
 	
 	public Node getNode(int id) {
@@ -34,39 +57,49 @@ public class Graph implements Serializable{
 		}
 	}
 	
-	public synchronized void addEdge(int from, int to, long cap) throws Exception {
+	public void addEdge(int from, int to, long cap) throws Exception {
 		
-		if(from < 0 || from >= nextNodeID) {				
-			throw new Exception("Node " + from + " out of range [0~" + (nextNodeID>0?nextNodeID-1:0) +"]");
+		if(from < 0 || from >= nodeCount) {				
+			throw new Exception("Node " + from + " out of range [0~" + (nodeCount>0?nodeCount-1:0) +"]");
 		}
-		if(to < 0 || to >= nextNodeID) {
-			throw new Exception("Node " + to + " out of range [0~" + (nextNodeID>0?nextNodeID-1:0) +"]");
+		if(to < 0 || to >= nodeCount) {
+			throw new Exception("Node " + to + " out of range [0~" + (nodeCount>0?nodeCount-1:0) +"]");
 		}
+		
 		if(cap < 0) {
 			throw new Exception("Invalid edge capacity: " + cap);
 		}
 		
 		Edge newEdge = new Edge(from, to, cap);
+		
 		if(edges.contains(newEdge)) {
 			throw new Exception("This edge" + from + " -> " + to +  " already existed");
 		}
+		
 		edges.add(newEdge);
+		
 		adjList.get(from).add(to);
 	}
 	
-	public int getNodeCount() {
-		return nextNodeID;
+	public void deleteEdge(int from, int to) throws Exception{
+		if(from < 0 || from >= nodeCount) {				
+			throw new Exception("Node " + from + " out of range [0~" + (nodeCount>0?nodeCount-1:0) +"]");
+		}
+		if(to < 0 || to >= nodeCount) {
+			throw new Exception("Node " + to + " out of range [0~" + (nodeCount>0?nodeCount-1:0) +"]");
+		}
+		adjList.get(from).removeIf(t -> t == to);
+		edges.removeIf(e -> (e.getFrom()==from && e.getTo()==to));
 	}
 	
-	@Override
-	public String toString() {
-		return "Adjacent list: \n" + adjList + "\n Edges:\n" + edges;
+	public int getNodeCount() {
+		return nodeCount;
 	}
 	
 	public void serialize(String filename) throws IOException {
         
 		//Saving of object in a file
-		FileOutputStream file = new FileOutputStream("data/graphs/"+filename);
+		FileOutputStream file = new FileOutputStream(filename);
 		ObjectOutputStream out = new ObjectOutputStream(file);
 		
 		// Method for serialization of object
@@ -82,7 +115,7 @@ public class Graph implements Serializable{
 		Graph g = null;
 		
 		// Reading the object from a file
-		FileInputStream file = new FileInputStream("data/graphs/"+filename);
+		FileInputStream file = new FileInputStream(filename);
 		ObjectInputStream in = new ObjectInputStream(file);
 		
 		// Method for deserialization of object
@@ -92,5 +125,20 @@ public class Graph implements Serializable{
 		file.close();
 		
 		return g;
+	}
+	
+	public void clear() {
+		nodeCount = 0;
+		nodes.clear();
+		edges.clear();
+		for(ArrayList<Integer> l : adjList) {
+			l.clear();
+		}
+		adjList.clear();
+	}
+	
+	@Override
+	public String toString() {
+		return "Adjacent list: \n" + adjList + "\n Edges:\n" + edges;
 	}
 }

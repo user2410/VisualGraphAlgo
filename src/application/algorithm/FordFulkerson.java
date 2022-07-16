@@ -48,6 +48,7 @@ public class FordFulkerson extends EdmondKarp {
 			path.clear();
 			for (int v = t; v != s; v = parent[v]) {
 				int u = parent[v];
+				path.add(new Edge(u,v));
 				pathFlow = pathFlow < rGraph[u][v] ? pathFlow : rGraph[u][v];
 			}
 			
@@ -56,9 +57,9 @@ public class FordFulkerson extends EdmondKarp {
 			for (int v = t; v != s; v = parent[v]) {
 				int u = parent[v];
 				rGraph[u][v] -= pathFlow;
-				addState(stMaker.makeState3(this, pathFlow, u, v, false));
+				addState(stMaker.makeState3(this, pathFlow, u, v, path, false));
 				rGraph[v][u] += pathFlow;
-				addState(stMaker.makeState3(this, pathFlow, v, u, true));
+				addState(stMaker.makeState3(this, pathFlow, v, u, path, true));
 			}
 
 			maxFlow += pathFlow;
@@ -68,7 +69,7 @@ public class FordFulkerson extends EdmondKarp {
 		addState(stMaker.makeState5(this));
 		
 		getMinCut(this.cGraph, this.rGraph);
-		addState(stMaker.makeStateFinal(this));
+		addState(stMaker.makeStateFinal(this, minCuts));
 	}
 	
 }

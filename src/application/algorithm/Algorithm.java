@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Stack;
 
+import application.graph.Edge;
 import application.graph.Graph;
 import application.context.Context;
 import application.context.state.AlgoState;
 import application.context.state.Step;
 import application.context.state.factory.StateMaker;
-import javafx.util.Pair;
 
 public abstract class Algorithm {
 
@@ -21,11 +21,10 @@ public abstract class Algorithm {
 	
 	protected long[][] cGraph;
 	
-	public ArrayList<Pair<Integer, Integer>> minCuts = new ArrayList<Pair<Integer, Integer>>();
+	public ArrayList<Edge> minCuts = new ArrayList<Edge>();
 	
 	// State properties
 	protected StateMaker _stMaker;
-	protected AlgoState currentState;
 	protected Context context;
 	
 	// Algorithm constructor
@@ -89,7 +88,7 @@ public abstract class Algorithm {
 		for (int i = 0; i < n; i++) {
 			for (int j = 0; j < n; j++) {
 				if (visited[i] && !visited[j] && (cGraph[i][j] > 0))
-					minCuts.add(new Pair<Integer, Integer>(i, j));
+					minCuts.add(new Edge(i, j));
 			}
 		}
 	}

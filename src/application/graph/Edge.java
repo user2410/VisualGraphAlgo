@@ -9,9 +9,9 @@ public class Edge implements Serializable{
 	 */
 	private static final long serialVersionUID = 592333285344128711L;
 	
-	private int from, to;
-	private long capacity;
-	private long flow;
+	int from, to;
+	long capacity;
+	long flow;
 	
 	public Edge(int from, int to) {		
 		this.from = from;
@@ -38,12 +38,24 @@ public class Edge implements Serializable{
 		return from;
 	}
 
+	public void setFrom(int from) {
+		this.from = from;
+	}
+
 	public int getTo() {
 		return to;
 	}
 
+	public void setTo(int to) {
+		this.to = to;
+	}
+
 	public long getCapacity() {
 		return capacity;
+	}
+
+	public void setCapacity(long capacity) {
+		this.capacity = capacity;
 	}
 
 	@Override

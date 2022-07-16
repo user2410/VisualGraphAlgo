@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+import application.MainController;
 import application.algorithm.Algorithm;
 import application.context.state.AlgoState;
 import application.context.state.Step;
@@ -12,6 +13,8 @@ import application.graph.Graph;
 // import application.graph.Graph;
 
 public class Context{
+	
+	private MainController controller;
 
 	private Graph graph;
 
@@ -21,19 +24,16 @@ public class Context{
 	private AtomicInteger currentState = new AtomicInteger(0);
 	private ArrayList<Step> baseSteps;
 	
-	private AtomicLong delay = new AtomicLong(1000);
+	public final long DEFAULT_DELAY = 1500;
+	private AtomicLong delay = new AtomicLong(DEFAULT_DELAY);
 	
 	private final AtomicBoolean isAlive = new AtomicBoolean();
 	private final AtomicBoolean isPlaying = new AtomicBoolean();
 	
-	public Context() {
+	public Context(MainController controller) {
 		isAlive.set(false);
 		isPlaying.set(false);
-	}
-	
-	public Context(Algorithm algo) {
-		this();
-		setAlgo(algo);
+		this.controller = controller;
 	}
 	
 	public void setAlgo(Algorithm algo) {
@@ -64,39 +64,54 @@ public class Context{
 	public void addState(AlgoState s) {
 		states.add(s);
 	}
+	
+	public AlgoState getStateAt(int i) {
+		if(i>=0 && i<states.size()) {
+			return states.get(i);			
+		}
+		return null;
+	}
 
+	public int getCurrentStateNum() {
+		return currentState.get();
+	}
+	
 	public AlgoState getCurrentState() {
 		return states.get(currentState.get());
 	}
 	
-	public synchronized AlgoState next() {
-		AlgoState st = null;
-		if(currentState.get() + 1 < states.size()) {
-			int cur = currentState.get();
-			st = states.get(cur);
-			currentState.set(cur+1);
+	public void setCurrentState(int st) {
+		if(st>=0 && st<states.size()) {
+			currentState.set(st);
+			controller.reactToContext(getCurrentState());
 		}
-		
-		return st;
 	}
 	
-	public synchronized AlgoState prev() {
-		AlgoState st = null;
-		if(currentState.get() > 0) {
-			int cur = currentState.get(); 
-			st = states.get(cur);
-			currentState.set(cur+1);
+	public int getStateCount() {
+		return states.size();
+	}
+	
+	public synchronized void next() {
+		if(currentState.get() + 1 < states.size()) {
+			currentState.set(currentState.get()+1);
 		}
-		
-		return st;
+		controller.reactToContext(getCurrentState());
+	}
+	
+	public synchronized void prev() {
+		if(currentState.get() > 0) {
+			currentState.set(currentState.get()-1);
+		}
+		controller.reactToContext(getCurrentState());
 	}
 	
 	public boolean isPlaying() {
 		return isPlaying.get();
 	}
 	
-	public void setDelay(long delay) {
-		this.delay.set(delay);;
+	public void setSpeed(double speed) {
+		speed = 1.0/speed;
+		delay.set((long)(speed*DEFAULT_DELAY));
 	}
 	
 	public synchronized void terminate() {
@@ -104,33 +119,39 @@ public class Context{
 		notify();
 	}
 	
-	public synchronized void togglePlaying() {
-		boolean _isPlaying = isPlaying.get();
-		isPlaying.set(!_isPlaying);
-		if(!_isPlaying)
-			notify();
+	public void pause() {
+		isPlaying.set(false);
+	}
+	
+	public synchronized void resume() {
+		isPlaying.set(true);
+		notify();
 	}
 	
 	public synchronized void play() {
 		isAlive.set(true);
 		isPlaying.set(true);
-		
+		AlgoState oldSt = null, st;
 		while(isAlive.get()) {
-			AlgoState st = next();
+			st = getCurrentState();
 			System.out.println(st);
-			if(st==null) {
+			if(oldSt == st) {
 				isPlaying.set(false);
+				controller.reactToContext(null);
+			}else {
+				controller.reactToContext(st);
 			}
+			oldSt = st;
 			try {
-				if(isPlaying.get()) {					
+				if(isPlaying.get()) {
 					wait(delay.get());
 				}
 				else {
 					wait();
 				}
-			} catch (InterruptedException e) {
-				
-			}
+			} catch (InterruptedException e) {}
+			next();
 		}
 	}
+	
 }

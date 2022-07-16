@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Max flow graph algorithms visualizer app" textAlignment="CENTER" BorderPane.alignment="CENTER">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+         <BorderPane.margin>
+            <Insets top="20.0" />
+         </BorderPane.margin>
+      </Text>
+   </top>
+   <center>
+      <GridPane alignment="CENTER" prefHeight="297.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="155.0" minWidth="10.0" prefWidth="112.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="208.0" minWidth="10.0" prefWidth="208.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <BorderPane.margin>
+            <Insets top="15.0" />
+         </BorderPane.margin>
+         <children>
+            <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Team members:" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Nguyen Kim Bao (20194486)" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Pham Le Danh Chinh (20194492)" GridPane.columnIndex="1" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Nguyen Thi Hoai Thu (20194683)" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Text fill="RED" layoutX="10.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Programmers:" GridPane.rowIndex="4" />
+            <Text layoutX="170.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pham Le Danh Chinh (algorithm + gui)" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Text layoutX="170.0" layoutY="89.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nguyen Kim Bao (gui)" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <Text fill="RED" layoutX="10.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Designer:" GridPane.rowIndex="3" />
+            <Text layoutX="170.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pham Le Danh Chinh" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Text fill="RED" layoutX="10.0" layoutY="138.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Documenters:" GridPane.rowIndex="6" />
+            <Text layoutX="170.0" layoutY="138.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pham Le Danh Chinh" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <Text layoutX="170.0" layoutY="103.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nguyen Thi Hoai Thu" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+         </children>
+      </GridPane>
+   </center>
+   <left>
+      <Pane prefHeight="256.0" prefWidth="140.0" BorderPane.alignment="CENTER" />
+   </left>
+   <right>
+      <Pane prefHeight="256.0" prefWidth="140.0" BorderPane.alignment="CENTER" />
+   </right>
+   <bottom>
+      <Pane prefHeight="100.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="okBtn" layoutX="284.0" layoutY="38.0" mnemonicParsing="false" text="OK" />
+         </children>
+      </Pane>
+   </bottom>
+</BorderPane>
