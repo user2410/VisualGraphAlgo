@@ -152,6 +152,7 @@ public class GGraph extends Graph{
 								selectedEdge.setSelected(true);
 								graphTable.getSelectionModel().clearSelection();
 								graphTable.getSelectionModel().select(idx);
+								graphTable.scrollTo(idx);
 							}else { // the same edge is selected again
 								selectedEdge = null;
 							}
@@ -160,6 +161,7 @@ public class GGraph extends Graph{
     						selectedEdge.setSelected(true);
     						graphTable.getSelectionModel().clearSelection();
     						graphTable.getSelectionModel().select(idx);
+    						graphTable.scrollTo(idx);
 						}
 					}else {	// newly created edge
 						addEdge(selectedNode, n);

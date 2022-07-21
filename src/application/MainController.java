@@ -313,7 +313,8 @@ public class MainController implements Initializable {
 		if(isExploring) {
 			isExploring = false;
 			playbackPane.setDisable(true);
-			graphTable.setDisable(false);
+			// graphTable.setDisable(false);
+			for(Edge e : tGraph.edges) {((GEdge)e).setModifying(true);}
 			algoSelector.setDisable(false);
 			srcNodeInput.setDisable(false);
 			sinkNodeInput.setDisable(false);
@@ -335,7 +336,8 @@ public class MainController implements Initializable {
 			if(srcNode!=Integer.MAX_VALUE && sinkNode != Integer.MAX_VALUE) {
 				isExploring = true;
 				playbackPane.setDisable(false);
-				graphTable.setDisable(true);
+				// graphTable.setDisable(true);
+				for(Edge e : tGraph.edges) {((GEdge)e).setModifying(false);}
 				algoSelector.setDisable(true);
 				srcNodeInput.setDisable(true);
 				sinkNodeInput.setDisable(true);
@@ -433,7 +435,13 @@ public class MainController implements Initializable {
 		for(Edge e : tGraph.edges){
 			((GEdge)e).updateLabel(Long.valueOf(rGraph[e.getFrom()][e.getTo()]).toString()
 					+ '|' + Long.valueOf(rGraph[e.getTo()][e.getFrom()]).toString());
-			if(path!=null) ((GEdge)e).setSelected(path.contains(e));
+			if(path!=null) {
+				boolean selected = path.contains(e);
+				if(path.contains(new Edge(e.getTo(), e.getFrom()))){
+					selected = true;
+				}
+				((GEdge)e).setSelected(selected);
+			}
 		};
 		
 		// update progressSlider

@@ -118,5 +118,10 @@ public class GEdge extends Edge{
 	public void setDeleteBtn(Button deleteBtn) {
 		this.deleteBtn = deleteBtn;
 	}
+	
+	public void setModifying(boolean set) {
+		capField.setDisable(!set);
+		deleteBtn.setDisable(!set);
+	}
 
 }
