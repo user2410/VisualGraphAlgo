@@ -98,6 +98,10 @@ public class GEdge extends Edge{
 			line.setFill(Color.BLACK);
 		}
 	}
+
+	public void setStrong(boolean strong) {
+		if(strong) line.setFill(Color.DARKORANGE);
+	}
 	
 	public void remove() {
 		g.drawPane.getChildren().removeAll(line, label);

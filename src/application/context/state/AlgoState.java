@@ -10,6 +10,7 @@ public class AlgoState {
 	private String stateText1;
 	private String stateText2;
 	private Step step;			// for debugging purpose only
+	private Edge strong;
 	private ArrayList<Edge> path = null;
 	
 	public AlgoState(long[][] rGraph, String stateText1, String stateText2, Step step) {
@@ -44,6 +45,14 @@ public class AlgoState {
 		this.path = new ArrayList<Edge>(path);
 	}
 	
+	public Edge getStrong() {
+		return strong;
+	}
+
+	public void setStrong(Edge strong) {
+		this.strong = strong;
+	}
+
 	@Override
 	public String toString() {
 		return "===============\n" + 

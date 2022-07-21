@@ -45,6 +45,7 @@ public class DinicStateMaker extends StateMaker {
 		
 		AlgoState newState = new AlgoState(RGraph, currentFlowText(algo), "Bottleneck is " + bottleneck + ". Updating edge from " + from + " to " + to + '.', steps.get(4));
 		newState.setPath(path);
+		newState.setStrong(new Edge(from, to));
 		return newState;
 	}
 	

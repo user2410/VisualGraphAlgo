@@ -432,17 +432,20 @@ public class MainController implements Initializable {
 		// update draw pane
 		long[][] rGraph = as.getrGraph();
 		ArrayList<Edge> path = as.getPath();
-		for(Edge e : tGraph.edges){
-			((GEdge)e).updateLabel(Long.valueOf(rGraph[e.getFrom()][e.getTo()]).toString()
+		Edge strong = as.getStrong();
+		for(Edge edge : tGraph.edges){
+			GEdge e = (GEdge)edge;
+			e.updateLabel(Long.valueOf(rGraph[e.getFrom()][e.getTo()]).toString()
 					+ '|' + Long.valueOf(rGraph[e.getTo()][e.getFrom()]).toString());
 			if(path!=null) {
 				boolean selected = path.contains(e);
 				if(path.contains(new Edge(e.getTo(), e.getFrom()))){
 					selected = true;
 				}
-				((GEdge)e).setSelected(selected);
+				e.setSelected(selected);
 			}
-		};
+			if(strong!=null) e.setStrong(e.equals(strong));
+		}
 		
 		// update progressSlider
 		progressSlider.setValue(context.getCurrentStateNum());

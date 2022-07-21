@@ -36,6 +36,7 @@ public class EKStateMaker extends StateMaker{
 		String stateText = "Bottleneck is " + bottleneck + ". Updating edge from " + u + " to " + v + '.';
 		AlgoState newState = new AlgoState(algo.getRGraph(), currentFlowText(algo), stateText, getSteps().get(inc ? 5 : 4));
 		newState.setPath(path);
+		newState.setStrong(new Edge(u, v));
 		return newState;
 	}
 	
