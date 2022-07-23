@@ -433,6 +433,14 @@ public class MainController implements Initializable {
 		long[][] rGraph = as.getrGraph();
 		ArrayList<Edge> path = as.getPath();
 		Edge strong = as.getStrong();
+		Edge _strong = new Edge(0,0);
+		if(strong==null) {
+			strong = new Edge(0,0);
+			_strong = strong;
+		}else {
+			_strong.setFrom(strong.getTo());
+			_strong.setTo(strong.getFrom());
+		}
 		for(Edge edge : tGraph.edges){
 			GEdge e = (GEdge)edge;
 			e.updateLabel(Long.valueOf(rGraph[e.getFrom()][e.getTo()]).toString()
@@ -444,7 +452,8 @@ public class MainController implements Initializable {
 				}
 				e.setSelected(selected);
 			}
-			if(strong!=null) e.setStrong(e.equals(strong));
+			e.setStrong(e.equals(strong));
+			e.setStrong(e.equals(_strong));			
 		}
 		
 		// update progressSlider
